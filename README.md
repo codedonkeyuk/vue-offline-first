@@ -1,8 +1,8 @@
-# vue-template
+# job-search
 
-Simple Vue / Vite template. Starting point for future JS apps.
+A vue project designed to help folks search for jobs.
 
-Vite has been configured to generate icons off a single svg file. This svg file is also used for social media image. You need to edit [./public/logo-square.svg](./public/logo-square.svg) to change all the images used in the app for social sharing and icons.
+I have decided that I need a more professional way to keep track of job searches. Spread sheets don't cut it.
 
 ## This app might not be up to date
 
