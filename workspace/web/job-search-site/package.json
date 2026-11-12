@@ -1,0 +1,42 @@
+{
+  "name": "job-search-site",
+  "version": "0.0.1",
+  "description": "A basic JavaScript SPA template project.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.comcodedonkeyuk/spa-template.git"
+  },
+  "license": "MIT",
+  "author": "Leigh",
+  "type": "module",
+  "private": true,
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "clean": "prettier . --write",
+    "validate": "prettier . --check && tsc --noEmit && npx cspell README.md",
+    "dev": "vite",
+    "serveDev": "vite --open",
+    "serveProd": "vite preview --open",
+    "prebuild": "prettier . --check && tsc --noEmit",
+    "build": "vite build",
+    "test": "vitest run",
+    "test:debug": "vitest --inspect-brk --no-file-parallelism run",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@vite-pwa/assets-generator": "^2.0.0",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "@vue/test-utils": "^2.5.1",
+    "jsdom": "^29.1.1",
+    "prettier": "3.9.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^4.1.10"
+  },
+  "dependencies": {
+    "vue": "^3.5.45"
+  }
+}

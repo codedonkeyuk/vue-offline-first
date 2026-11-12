@@ -1,4 +1,4 @@
-# job-search
+# job-search-site
 
 A vue project designed to help folks search for jobs.
 

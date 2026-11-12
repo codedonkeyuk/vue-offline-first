@@ -1,56 +1,25 @@
 {
   "name": "job-search",
-  "version": "0.0.2",
-  "description": "A basic JavaScript SPA template project.",
-  "homepage": "https://github.com/codedonkeyuk/spa-template#readme",
+  "version": "0.0.3",
+  "description": "A fullstack application to help with job searchs",
+  "homepage": "https://github.com/codedonkeyuk/job-search#readme",
   "bugs": {
-    "url": "https://github.com/codedonkeyuk/spa-templateissues"
+    "url": "https://github.com/codedonkeyuk/job-searchissues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.comcodedonkeyuk/spa-template.git"
+    "url": "git+https://github.comcodedonkeyuk/job-search.git"
   },
-  "license": "MIT",
-  "author": "Leigh",
-  "type": "module",
-  "private": true,
-  "sideEffects": [
-    "*.css"
+  "workspaces": [
+    "./workspace/web/job-search-site"
   ],
   "scripts": {
-    "clean": "prettier . --write",
-    "validate": "prettier . --check && tsc --noEmit && npx cspell README.md",
-    "dev": "vite",
-    "serveDev": "vite --open",
-    "serveProd": "vite preview --open",
-    "prebuild": "prettier . --check && tsc --noEmit",
-    "build": "vite build",
-    "test": "vitest run",
-    "test:debug": "vitest --inspect-brk --no-file-parallelism run",
-    "prepare": "husky"
+    "clean": "npm run clean --workspaces --if-present",
+    "validate": "npm run validate --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
   },
   "devDependencies": {
-    "@vite-pwa/assets-generator": "^2.0.0",
-    "@vitejs/plugin-vue": "^6.0.10",
-    "@vue/test-utils": "^2.5.1",
-    "cspell": "^10.0.1",
-    "husky": "^9.1.7",
-    "jsdom": "^29.1.1",
-    "prettier": "3.9.6",
-    "typescript": "^7.0.2",
-    "vite": "^8.1.5",
-    "vite-plugin-pwa": "^2.0.0",
-    "vitest": "^4.1.10"
-  },
-  "overrides": {
-    "deepmerge": "npm:@fastify/deepmerge@^3.2.4",
-    "glob": "^14.0.2",
-    "minimatch": "^11.0.1"
-  },
-  "allowScripts": {
-    "fsevents@2.3.3": true
-  },
-  "dependencies": {
-    "vue": "^3.5.45"
+    "husky": "^9.1.7"
   }
 }
