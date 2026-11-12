@@ -14,15 +14,15 @@
     "./workspace/web/*"
   ],
   "scripts": {
-    "clean": "npm run clean --workspaces --if-present",
-    "validate": "npx cspell README.md && npm run validate --workspaces --if-present",
+    "clean": "prettier . --write",
+    "validate": "prettier . --check && npx cspell **/*.md",
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present"
   },
-  "devDependencies": 
-  {
+  "devDependencies": {
     "cspell": "^10.0.1",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "prettier": "3.9.6"
   },
   "overrides": {
     "deepmerge": "npm:@fastify/deepmerge@^3.2.4",
