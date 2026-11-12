@@ -18,6 +18,7 @@ I decided after a day of blaming myself that enough was enough, I need my own AI
 | `nvm run clean`                                             | Clean all projects                                                         |
 | `nvm run validate`                                          | Validate all projects                                                      |
 | `nvm run build`                                             | Build all the projects                                                     |
+| `nvm run serve`                                             | Run web site and admin service for live development                        |
 | `docker compose up -d`                                      | Run docker in test mode, gives you a database to work against              |
 | `docker compose -f compose.yaml -f compose.prod.yaml up -d` | Run docker in productions mode, gives you database site and everything     |
 
