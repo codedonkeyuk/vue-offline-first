@@ -6,3 +6,8 @@ services:
       - COUCHDB_PASSWORD=${COUCHDB_PASSWORD:-password}
     ports:
       - "5984:5984"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5984/_up"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
