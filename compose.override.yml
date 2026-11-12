@@ -1,0 +1,5 @@
+services:
+  couchdb:
+    # No volumes or restart policy so data wipes cleanly on 'down'
+    tmpfs:
+      - /opt/couchdb/data

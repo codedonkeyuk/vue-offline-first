@@ -10,11 +10,30 @@ I decided after a day of blaming myself that enough was enough, I need my own AI
 
 ## Commands
 
-| code               | description                                                                |
-| ------------------ | -------------------------------------------------------------------------- |
-| `npm install`      | install dependencies for all projects.                                     |
-| `nvm use`          | Use node version specified in projects .nvmrc file. (NVM needs installing) |
-| `nvm run test`     | Test all projects                                                          |
-| `nvm run clean`    | Clean all projects                                                         |
-| `nvm run validate` | Validate all projects                                                      |
-| `nvm run build`    | Build all the projects                                                     |
+| code                                                        | description                                                                |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `npm install`                                               | install dependencies for all projects.                                     |
+| `nvm use`                                                   | Use node version specified in projects .nvmrc file. (NVM needs installing) |
+| `nvm run test`                                              | Test all projects                                                          |
+| `nvm run clean`                                             | Clean all projects                                                         |
+| `nvm run validate`                                          | Validate all projects                                                      |
+| `nvm run build`                                             | Build all the projects                                                     |
+| `docker compose up -d`                                      | Run docker in test mode, gives you a database to work against              |
+| `docker compose -f compose.yaml -f compose.prod.yaml up -d` | Run docker in productions mode, gives you database site and everything     |
+
+## Usage Commands
+
+### Configure CouchDB for Live Environment
+
+By default CouchDB uses username:`admin` and password:`password`. To deploy in live environment simply add a `.env` file in root with the following settings.
+
+```sh
+COUCHDB_USER=prodadmin
+COUCHDB_PASSWORD=YourSecureServerPassword
+```
+
+_`.gitignore` is configured to ignore `.env` file._
+
+### View CouchDB
+
+When running it live or in production upi can see it here [http://localhost:5984/_utils](http://localhost:5984/_utils). Use the credentials you set up to view the data.

@@ -1,0 +1,8 @@
+services:
+  couchdb:
+    restart: unless-stopped
+    volumes:
+      - couchdb_data:/opt/couchdb/data
+
+volumes:
+  couchdb_data:
