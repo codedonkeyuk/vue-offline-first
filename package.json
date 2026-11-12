@@ -13,6 +13,7 @@
   "workspaces": [
     "./workspace/web/*"
   ],
+  "private": true,
   "scripts": {
     "clean": "prettier . --write",
     "validate": "prettier . --check && npx cspell **/*.md",
@@ -22,7 +23,8 @@
   "devDependencies": {
     "cspell": "^10.0.1",
     "husky": "^9.1.7",
-    "prettier": "3.9.6"
+    "prettier": "3.9.6",
+    "typescript": "^7.0.2"
   },
   "overrides": {
     "deepmerge": "npm:@fastify/deepmerge@^3.2.4",
