@@ -1,0 +1,23 @@
+{
+  "name": "auth-service",
+  "version": "0.0.1",
+  "description": "A simple auth service for a web application to use locallya and on deve environments",
+  "license": "UNLICENCED",
+  "author": "leigh",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "serve": "node --watch ./src/server.ts",
+    "test": "node --test src/**/*.test.ts"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10"
+  }
+}
