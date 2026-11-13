@@ -1,5 +1,5 @@
 {
-  "name": "auth-service",
+  "name": "@job-search/auth-service",
   "version": "0.0.1",
   "description": "A simple auth service for a web application to use locallya and on deve environments",
   "license": "UNLICENCED",
@@ -11,6 +11,7 @@
     "test": "node --test src/**/*.test.ts"
   },
   "dependencies": {
+    "@job-search/db-validator": "*",
     "cors": "^2.8.6",
     "express": "^5.3.0",
     "jsonwebtoken": "^9.0.3"

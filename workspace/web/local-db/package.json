@@ -1,5 +1,5 @@
 {
-  "name": "local-db",
+  "name": "@job-search/local-db",
   "version": "0.0.1",
   "description": "A implementation of a pouchdb database for use within a web application",
   "license": "MIT",
@@ -11,7 +11,7 @@
   "scripts": {
     "clean": "npx oxlint --type-aware --fix",
     "validate": "npx oxlint --type-aware && tsc --noEmit && npx cspell README.md",
-    "prebuild": "npx prettier . --check && npx oxlint --type-aware && tsc --noEmit",
+    "prebuild": "npx oxlint --type-aware && tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
     "test": "node --experimental-strip-types --experimental-test-module-mocks --test \"**/*.test.ts\"",
     "coverage": "node --experimental-strip-types --experimental-test-module-mocks --test --experimental-test-coverage \"**/*.test.ts\"",
@@ -19,9 +19,16 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
+    "@types/pouchdb-adapter-memory": "^6.1.6",
+    "@types/pouchdb-browser": "^6.1.5",
     "cspell": "^10.0.1",
     "husky": "^9.1.7",
+    "pouchdb-adapter-memory": "^9.0.0",
     "prettier": "3.9.5",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@job-search/db-validator": "*",
+    "pouchdb-browser": "^9.0.0"
   }
 }

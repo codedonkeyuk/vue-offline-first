@@ -1,7 +1,7 @@
 import express, { type Request, type Response } from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
-import validateDocUpdate from "./validation/validateDocUpdate.js";
+import { getCouchDesignDoc } from "@job-search/db-validator";
 
 export const app = express();
 app.use(cors());
@@ -62,7 +62,7 @@ app.post("/login", async (req: Request<{}, {}, LoginBody>, res: Response) => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          validate_doc_update: validateDocUpdate.toString(),
+          validate_doc_update: getCouchDesignDoc(),
         }),
       });
     }
