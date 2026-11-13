@@ -16,8 +16,8 @@
   "private": true,
   "scripts": {
     "serve": "concurrently -k -n auth,web -c cyan,magenta \"npm run serve -w auth-service\" \"npm run serveDev -w job-search-site\"",
-    "clean": "prettier . --write",
-    "validate": "prettier . --check && npx cspell **/*.md",
+    "clean": "prettier . --write && npx oxlint --type-aware --fix",
+    "validate": "prettier . --check && npx oxlint --type-aware && npx cspell --exclude \"**/node_modules/**\" **/*.md",
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present"
   },
@@ -25,6 +25,8 @@
     "concurrently": "^10.0.7",
     "cspell": "^10.0.1",
     "husky": "^9.1.7",
+    "oxlint": "^1.88.0",
+    "oxlint-tsgolint": "^7.0.2004",
     "prettier": "3.9.6",
     "typescript": "^7.0.2"
   },

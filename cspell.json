@@ -5,7 +5,8 @@
   "languageSettings": [
     {
       "languageId": "markdown",
-      "ignoreRegExpList": ["/^\\s*```[\\s\\S]*?^\\s*```/gm"]
+      "ignoreRegExpList": ["/^\\s*```[\\s\\S]*?^\\s*```/gm"],
+      "ignorePaths": ["**/node_modules/**"]
     }
   ]
 }
