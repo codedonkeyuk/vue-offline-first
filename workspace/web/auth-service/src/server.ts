@@ -1,6 +1,7 @@
 import express, { type Request, type Response } from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
+import validateDocUpdate from "./validation/validateDocUpdate.js";
 
 export const app = express();
 app.use(cors());
@@ -54,6 +55,14 @@ app.post("/login", async (req: Request<{}, {}, LoginBody>, res: Response) => {
         body: JSON.stringify({
           admins: { names: [], roles: ["_admin"] },
           members: { names: [user.id], roles: [] },
+        }),
+      });
+
+      await fetch(`${COUCH_URL}/${dbName}/_design/validation`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          validate_doc_update: validateDocUpdate.toString(),
         }),
       });
     }

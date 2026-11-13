@@ -102,13 +102,20 @@ describe("POST /login", () => {
     assert.equal(decoded.sub, "user-alice-001");
     assert.equal(decoded.username, "alice");
 
-    // Verify CouchDB was called in the right order: HEAD -> PUT db -> PUT _security
-    assert.equal(couchCalls.length, 3);
+    assert.equal(couchCalls.length, 4);
     assert.equal(couchCalls[0].method, "HEAD");
     assert.equal(couchCalls[1].method, "PUT");
     assert.ok(couchCalls[1].url.endsWith("/userdb-useralice001"));
     assert.equal(couchCalls[2].method, "PUT");
     assert.ok(couchCalls[2].url.endsWith("/userdb-useralice001/_security"));
+    assert.equal(couchCalls[3].method, "PUT");
+    assert.ok(
+      couchCalls[3].url.endsWith("/userdb-useralice001/_design/validation"),
+    );
+
+    const validationBody = JSON.parse(couchCalls[3].body!);
+    assert.equal(typeof validationBody.validate_doc_update, "string");
+    assert.ok(validationBody.validate_doc_update.includes("forbidden"));
   });
 
   it("skips database creation when user database already exists", async () => {
