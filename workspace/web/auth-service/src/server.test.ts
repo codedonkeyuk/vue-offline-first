@@ -65,7 +65,12 @@ describe("POST /login", () => {
       input: string | URL | Request,
       init?: RequestInit,
     ) => {
-      const url = input.toString();
+      const url =
+        typeof input === "string"
+          ? input
+          : input instanceof URL
+            ? input.href
+            : input.url;
       if (url.startsWith(baseUrl)) {
         return originalFetch(input, init);
       }
@@ -125,7 +130,12 @@ describe("POST /login", () => {
       input: string | URL | Request,
       init?: RequestInit,
     ) => {
-      const url = input.toString();
+      const url =
+        typeof input === "string"
+          ? input
+          : input instanceof URL
+            ? input.href
+            : input.url;
       if (url.startsWith(baseUrl)) {
         return originalFetch(input, init);
       }
@@ -151,7 +161,12 @@ describe("POST /login", () => {
       input: string | URL | Request,
       init?: RequestInit,
     ) => {
-      const url = input.toString();
+      const url =
+        typeof input === "string"
+          ? input
+          : input instanceof URL
+            ? input.href
+            : input.url;
       if (url.startsWith(baseUrl)) {
         return originalFetch(input, init);
       }

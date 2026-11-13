@@ -1,0 +1,27 @@
+{
+  "name": "local-db",
+  "version": "0.0.1",
+  "description": "A implementation of a pouchdb database for use within a web application",
+  "license": "MIT",
+  "author": "Leigh",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": true,
+  "scripts": {
+    "clean": "npx oxlint --type-aware --fix",
+    "validate": "npx oxlint --type-aware && tsc --noEmit && npx cspell README.md",
+    "prebuild": "npx prettier . --check && npx oxlint --type-aware && tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --experimental-strip-types --experimental-test-module-mocks --test \"**/*.test.ts\"",
+    "coverage": "node --experimental-strip-types --experimental-test-module-mocks --test --experimental-test-coverage \"**/*.test.ts\"",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "cspell": "^10.0.1",
+    "husky": "^9.1.7",
+    "prettier": "3.9.5",
+    "typescript": "^7.0.2"
+  }
+}
