@@ -3,10 +3,17 @@ import { defineConfig } from "vite";
 import siteConfig from "./site-config.json" with { type: "json" };
 import { VitePWA } from "vite-plugin-pwa";
 import vue from "@vitejs/plugin-vue";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
   plugins: [
     vue(),
+    nodePolyfills({
+      include: ["events"],
+      globals: {
+        global: true,
+      },
+    }),
     VitePWA({
       registerType: "autoUpdate",
       workbox: {
@@ -43,5 +50,15 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: "./src/setupTests.ts",
+  },
+  worker: {
+    plugins: () => [
+      nodePolyfills({
+        include: ["events"],
+        globals: {
+          global: true,
+        },
+      }),
+    ],
   },
 });

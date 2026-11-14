@@ -1,4 +1,9 @@
 import { createApp } from "vue";
 import App from "./components/App.vue";
+import { createJobDbPlugin } from "./plugins/jobDb.js";
 
-createApp(App).mount("#root");
+const app = createApp(App);
+
+app.use(createJobDbPlugin("job_search_local"));
+
+app.mount("#root");
