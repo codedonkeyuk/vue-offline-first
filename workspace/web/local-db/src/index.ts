@@ -1,4 +1,7 @@
-import PouchDB from "pouchdb-browser";
+import PouchDB from "pouchdb-core";
+import IDBAdapter from "pouchdb-adapter-idb";
+import HttpAdapter from "pouchdb-adapter-http";
+import Replication from "pouchdb-replication";
 import {
   assertValidDoc,
   type AppDocument,
@@ -6,6 +9,8 @@ import {
   type CvDoc,
   type JobApplicationDoc,
 } from "@job-search/db-validator";
+
+PouchDB.plugin(IDBAdapter).plugin(HttpAdapter).plugin(Replication);
 
 export interface SyncCallbacks {
   onChange?: (info: PouchDB.Replication.SyncResult<AppDocument>) => void;
@@ -19,6 +24,7 @@ export interface DbClientOptions {
   remoteBaseUrl?: string;
   remoteDbName?: string;
   token?: string;
+  adapter?: string;
 }
 
 export class JobSearchLocalDb {
@@ -28,7 +34,9 @@ export class JobSearchLocalDb {
   private changesHandler: PouchDB.Core.Changes<AppDocument> | null = null;
 
   constructor(dbName: string, options: DbClientOptions = {}) {
-    this.localDb = new PouchDB<AppDocument>(dbName);
+    this.localDb = new PouchDB<AppDocument>(dbName, {
+      adapter: options.adapter ?? "idb",
+    });
 
     if (options.remoteBaseUrl) {
       const cleanUrl = options.remoteBaseUrl.replace(/\/$/, "");
@@ -36,13 +44,20 @@ export class JobSearchLocalDb {
 
       this.remoteDb = new PouchDB<AppDocument>(`${cleanUrl}/${targetDb}`, {
         fetch: (url, opts) => {
-          const headers: Record<string, string> = {
-            ...(opts?.headers as Record<string, string>),
-          };
+          const headers: Record<string, string> = {};
+          if (opts?.headers) {
+            new Headers(opts.headers).forEach((value, key) => {
+              headers[key] = value;
+            });
+          }
           if (options.token) {
             headers["Authorization"] = `Bearer ${options.token}`;
           }
-          return PouchDB.fetch(url, { ...opts, headers });
+          return fetch(url, {
+            ...opts,
+            headers,
+            credentials: "omit",
+          });
         },
       });
     }
@@ -56,7 +71,11 @@ export class JobSearchLocalDb {
     this.stopSync();
 
     this.syncHandler = this.localDb
-      .sync(this.remoteDb, { live: true, retry: true })
+      .sync(this.remoteDb, {
+        live: true,
+        retry: true,
+        filter: (doc) => !doc._id.startsWith("_design/"),
+      })
       .on("change", (info) => callbacks.onChange?.(info))
       .on("paused", (err) => callbacks.onPaused?.(err))
       .on("active", () => callbacks.onActive?.())

@@ -36,6 +36,7 @@ export function validateDocUpdate(
       allowedFields: [
         "_id",
         "_rev",
+        "_revisions",
         "type",
         "title",
         "content",
@@ -50,6 +51,7 @@ export function validateDocUpdate(
       allowedFields: [
         "_id",
         "_rev",
+        "_revisions",
         "type",
         "title",
         "content",
@@ -60,7 +62,15 @@ export function validateDocUpdate(
     },
     job_application: {
       mutable: true,
-      allowedFields: ["_id", "_rev", "type", "title", "content", "updatedAt"],
+      allowedFields: [
+        "_id",
+        "_rev",
+        "_revisions",
+        "type",
+        "title",
+        "content",
+        "updatedAt",
+      ],
       maxContent: 5000,
     },
   };
@@ -169,8 +179,12 @@ export function assertValidDoc(
 }
 
 export function getCouchDesignDoc() {
+  const anonymousFn = validateDocUpdate
+    .toString()
+    .replace(/^function\s+validateDocUpdate/, "function");
+
   return {
     _id: "_design/validation",
-    validate_doc_update: validateDocUpdate.toString(),
+    validate_doc_update: anonymousFn,
   };
 }

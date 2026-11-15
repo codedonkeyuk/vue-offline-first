@@ -19,19 +19,25 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
+    "@types/pouchdb-adapter-http": "^6.1.6",
+    "@types/pouchdb-adapter-idb": "^6.1.7",
     "@types/pouchdb-adapter-memory": "^6.1.6",
-    "@types/pouchdb-browser": "^6.1.5",
+    "@types/pouchdb-core": "^7.0.15",
+    "@types/pouchdb-replication": "^6.4.7",
     "cspell": "^10.0.1",
     "husky": "^9.1.7",
-    "pouchdb-browser": "^9.0.0",
     "pouchdb-adapter-memory": "^9.0.0",
+    "pouchdb-core": "^9.0.0",
     "prettier": "3.9.5",
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@job-search/db-validator": "*"
+    "@job-search/db-validator": "*",
+    "pouchdb-adapter-http": "^9.0.0",
+    "pouchdb-adapter-idb": "^9.0.0",
+    "pouchdb-replication": "^9.0.0"
   },
   "peerDependencies": {
-    "pouchdb-browser": "^9.0.0"
+    "pouchdb-core": "^9.0.0"
   }
 }

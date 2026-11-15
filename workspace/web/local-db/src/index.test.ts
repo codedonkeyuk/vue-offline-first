@@ -1,27 +1,18 @@
 import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
-
-// 1. Shim browser/worker `self` global BEFORE loading pouchdb-browser
-(globalThis as any).self = globalThis;
-
-// 2. Dynamically import PouchDB and register the in-memory adapter
-const { default: PouchDB } = await import("pouchdb-browser");
-const { default: memoryAdapter } = await import("pouchdb-adapter-memory");
+import PouchDB from "pouchdb-core";
+import memoryAdapter from "pouchdb-adapter-memory";
+import { JobSearchLocalDb } from "./index.ts";
 
 PouchDB.plugin(memoryAdapter);
-(PouchDB as any).preferredAdapters = ["memory"];
-
-// 3. Dynamically import your library AFTER shims and adapters are configured
-const { JobSearchLocalDb } = await import("./index.ts");
-type JobSearchLocalDbInstance = InstanceType<typeof JobSearchLocalDb>;
 
 describe("JobSearchLocalDb", () => {
-  let db: JobSearchLocalDbInstance;
+  let db: JobSearchLocalDb;
   let dbName: string;
 
   beforeEach(() => {
     dbName = `test_db_${crypto.randomUUID()}`;
-    db = new JobSearchLocalDb(dbName);
+    db = new JobSearchLocalDb(dbName, { adapter: "memory" });
   });
 
   afterEach(async () => {

@@ -68,5 +68,6 @@ async function handleDisconnect() {
     <button v-else type="button" @click="handleDisconnect">
       Disconnect Sync
     </button>
+    <p v-if="syncError">{{ syncError }}</p>
   </div>
 </template>

@@ -18,17 +18,29 @@ self.onmessage = async (event: MessageEvent) => {
       });
 
       if (payload.options?.remoteBaseUrl) {
-        void db.startSync({
+        db.startSync({
           onChange: (info) =>
             self.postMessage({ event: "sync:change", data: info }),
           onPaused: (err) =>
             self.postMessage({ event: "sync:paused", error: err }),
           onActive: () => self.postMessage({ event: "sync:active" }),
-          onDenied: (err) =>
-            self.postMessage({ event: "sync:denied", error: err }),
+          onDenied: (err) => {
+            console.error("[db.worker] sync:denied:", err);
+            self.postMessage({
+              event: "sync:denied",
+              error: err?.doc?.reason ?? err?.message ?? "Document sync denied",
+            });
+          },
           onError: (err) => {
-            console.error("[db.worker] sync:error:", err);
-            self.postMessage({ event: "sync:error", error: err });
+            const details = JSON.stringify(
+              err,
+              Object.getOwnPropertyNames(err ?? {}),
+            );
+            console.error("[db.worker] sync:error:", details);
+            self.postMessage({
+              event: "sync:error",
+              error: err?.message ?? details,
+            });
           },
         });
       }

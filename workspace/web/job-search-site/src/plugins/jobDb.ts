@@ -1,4 +1,4 @@
-import "pouchdb-browser";
+import type {} from "pouchdb-core";
 import { inject, ref, type App, type InjectionKey, type Ref } from "vue";
 import type { DbClientOptions } from "@job-search/local-db";
 import type {
@@ -76,10 +76,14 @@ export function createJobDbPlugin(
               syncState.value = "syncing";
               syncError.value = null;
               break;
-            case "sync:paused":
-              syncState.value = msg.error ? "error" : "paused";
-              if (msg.error) syncError.value = msg.error;
+            case "sync:paused": {
+              const hasRealError = Boolean(
+                msg.error?.message || msg.error?.status || msg.error?.error,
+              );
+              syncState.value = hasRealError ? "error" : "paused";
+              syncError.value = hasRealError ? msg.error : null;
               break;
+            }
             case "sync:denied":
               syncState.value = "denied";
               syncError.value = msg.error;
