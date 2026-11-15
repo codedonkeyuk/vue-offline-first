@@ -15,9 +15,14 @@ export interface SyncCallbacks {
   onError?: (err: any) => void;
 }
 
+export interface RemoteSyncOptions {
+  remoteBaseUrl: string;
+  remoteDbName: string;
+  token: string;
+}
+
 export interface DbClientOptions {
-  remoteBaseUrl?: string;
-  token?: string;
+  sync?: RemoteSyncOptions;
 }
 
 export class JobSearchLocalDb {
@@ -25,24 +30,39 @@ export class JobSearchLocalDb {
   private remoteDb: PouchDB.Database<AppDocument> | null = null;
   private syncHandler: PouchDB.Replication.Sync<AppDocument> | null = null;
   private changesHandler: PouchDB.Core.Changes<AppDocument> | null = null;
+  private authToken: string | null = null;
 
-  constructor(dbName: string, options: DbClientOptions = {}) {
-    // Uses IndexedDB natively inside both the browser and Web Workers
-    this.localDb = new PouchDB<AppDocument>(dbName);
+  constructor(
+    localDbName: string = "job-search-local",
+    options: DbClientOptions = {},
+  ) {
+    // Always boots locally first—works 100% offline with zero auth required
+    this.localDb = new PouchDB<AppDocument>(localDbName);
 
-    if (options.remoteBaseUrl) {
-      const cleanUrl = options.remoteBaseUrl.replace(/\/$/, "");
+    if (options.sync) {
+      this.configureRemote(options.sync);
+    }
+  }
 
-      this.remoteDb = new PouchDB<AppDocument>(`${cleanUrl}/${dbName}`, {
+  /**
+   * Configures or updates the remote CouchDB target and token without touching local data.
+   */
+  configureRemote(syncOptions: RemoteSyncOptions) {
+    const cleanUrl = syncOptions.remoteBaseUrl.replace(/\/$/, "");
+    this.authToken = syncOptions.token;
+
+    this.remoteDb = new PouchDB<AppDocument>(
+      `${cleanUrl}/${syncOptions.remoteDbName}`,
+      {
         fetch: (url, opts) => {
           const headers = new Headers(opts?.headers);
-          if (options.token) {
-            headers.set("Authorization", `Bearer ${options.token}`);
+          if (this.authToken) {
+            headers.set("Authorization", `Bearer ${this.authToken}`);
           }
           return PouchDB.fetch(url, { ...opts, headers });
         },
-      });
-    }
+      },
+    );
   }
 
   /**
@@ -50,7 +70,7 @@ export class JobSearchLocalDb {
    */
   startSync(callbacks: SyncCallbacks = {}) {
     if (!this.remoteDb) {
-      throw new Error("Cannot start sync: remoteBaseUrl was not provided.");
+      throw new Error("Cannot start sync: remote CouchDB is not configured.");
     }
 
     this.stopSync();
@@ -66,6 +86,9 @@ export class JobSearchLocalDb {
     return this.syncHandler;
   }
 
+  /**
+   * Stops live sync cleanly while leaving local IndexedDB intact and usable offline.
+   */
   stopSync() {
     if (this.syncHandler) {
       this.syncHandler.cancel();
@@ -168,7 +191,6 @@ export class JobSearchLocalDb {
 
   /**
    * Fetches all documents of a specific type using _id prefixes.
-   * Avoids creating _design documents (which CouchDB blocks for non-admins).
    */
   async getAllByType<T extends AppDocument>(type: T["type"]): Promise<T[]> {
     const res = await this.localDb.allDocs({
@@ -221,7 +243,7 @@ export class JobSearchLocalDb {
   }
 
   /**
-   * Stops sync/listeners and wipes the local IndexedDB (useful on logout).
+   * Stops sync/listeners and wipes the local IndexedDB (optional hard reset).
    */
   async destroyLocal() {
     this.stopSync();
