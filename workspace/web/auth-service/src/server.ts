@@ -7,8 +7,8 @@ export const app = express();
 app.use(cors());
 app.use(express.json());
 
-const COUCH_URL =
-  process.env.COUCHDB_URL ?? "http://admin:password@couchdb:5984";
+const COUCH_URL = process.env.COUCHDB_URL ?? "http://localhost:5984";
+const COUCH_AUTH = `Basic ${Buffer.from("admin:password").toString("base64")}`;
 const JWT_SECRET = process.env.JWT_SECRET ?? "local-dev-secret";
 
 interface DevUser {
@@ -44,27 +44,50 @@ app.post("/login", async (req: Request<{}, {}, LoginBody>, res: Response) => {
   const dbName = `userdb-${user.id.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
 
   try {
-    const checkRes = await fetch(`${COUCH_URL}/${dbName}`, { method: "HEAD" });
+    const checkRes = await fetch(`${COUCH_URL}/${dbName}`, {
+      method: "HEAD",
+      headers: { Authorization: COUCH_AUTH },
+    });
 
     if (!checkRes.ok) {
-      await fetch(`${COUCH_URL}/${dbName}`, { method: "PUT" });
+      await fetch(`${COUCH_URL}/${dbName}`, {
+        method: "PUT",
+        headers: { Authorization: COUCH_AUTH },
+      });
 
       await fetch(`${COUCH_URL}/${dbName}/_security`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: COUCH_AUTH,
+        },
         body: JSON.stringify({
           admins: { names: [], roles: ["_admin"] },
           members: { names: [user.id], roles: [] },
         }),
       });
 
-      await fetch(`${COUCH_URL}/${dbName}/_design/validation`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          validate_doc_update: getCouchDesignDoc(),
-        }),
-      });
+      const designRes = await fetch(
+        `${COUCH_URL}/${dbName}/_design/validation`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: COUCH_AUTH,
+          },
+          body: JSON.stringify({
+            validate_doc_update: getCouchDesignDoc(),
+          }),
+        },
+      );
+
+      if (!designRes.ok) {
+        console.error(
+          "Design doc failed:",
+          designRes.status,
+          await designRes.text(),
+        );
+      }
     }
 
     const token = jwt.sign({ sub: user.id, username }, JWT_SECRET, {
@@ -73,7 +96,8 @@ app.post("/login", async (req: Request<{}, {}, LoginBody>, res: Response) => {
     });
 
     res.json({ token, dbName });
-  } catch {
+  } catch (err) {
+    console.error("Login error:", err);
     res.status(500).json({ error: "Failed to provision user database" });
   }
 });
