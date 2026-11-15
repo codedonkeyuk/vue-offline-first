@@ -11,6 +11,7 @@ import type {
 export type SyncState = "idle" | "syncing" | "paused" | "error" | "denied";
 
 export interface JobDbContext {
+  isSyncEnabled: Ref<boolean>;
   syncState: Ref<SyncState>;
   syncError: Ref<unknown>;
   lastDocChange: Ref<PouchDB.Core.ChangesResponseChange<AppDocument> | null>;
@@ -50,6 +51,7 @@ export function createJobDbPlugin(
         { type: "module" },
       );
 
+      const isSyncEnabled = ref(Boolean(initialOptions?.remoteBaseUrl));
       const syncState = ref<SyncState>("idle");
       const syncError = ref<unknown>(null);
       const lastDocChange =
@@ -69,6 +71,7 @@ export function createJobDbPlugin(
             case "db:change":
               lastDocChange.value = msg.data;
               break;
+            case "sync:change":
             case "sync:active":
               syncState.value = "syncing";
               syncError.value = null;
@@ -117,15 +120,19 @@ export function createJobDbPlugin(
 
       const connectSync = async (options: DbClientOptions) => {
         await send("INIT", { dbName, options });
+        isSyncEnabled.value = Boolean(options.remoteBaseUrl);
+        syncState.value = options.remoteBaseUrl ? "syncing" : "idle";
       };
 
       const disconnectSync = async () => {
         await send("STOP_SYNC");
+        isSyncEnabled.value = false;
         syncState.value = "idle";
       };
 
       const destroyLocal = async () => {
         await send("DESTROY");
+        isSyncEnabled.value = false;
         syncState.value = "idle";
         lastDocChange.value = null;
       };
@@ -133,6 +140,7 @@ export function createJobDbPlugin(
       void connectSync(initialOptions ?? {});
 
       app.provide(JOB_DB_KEY, {
+        isSyncEnabled,
         syncState,
         syncError,
         lastDocChange,

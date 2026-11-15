@@ -1,50 +1,38 @@
-import {
-  JobSearchLocalDb,
-  type DbClientOptions,
-  type RemoteSyncOptions,
-} from "@job-search/local-db";
+import { JobSearchLocalDb, type DbClientOptions } from "@job-search/local-db";
 
 let db: JobSearchLocalDb | null = null;
-
-function attachSync() {
-  if (!db) return;
-
-  void db.startSync({
-    onChange: (info) => self.postMessage({ event: "sync:change", data: info }),
-    onPaused: (err) => self.postMessage({ event: "sync:paused", error: err }),
-    onActive: () => self.postMessage({ event: "sync:active" }),
-    onDenied: (err) => self.postMessage({ event: "sync:denied", error: err }),
-    onError: (err) => self.postMessage({ event: "sync:error", error: err }),
-  });
-}
 
 self.onmessage = async (event: MessageEvent) => {
   const { id, type, payload } = event.data;
 
   try {
     if (type === "INIT") {
-      db?.stopSync();
+      db?.close();
       db = new JobSearchLocalDb(
-        payload?.dbName ?? "job-search-local",
-        payload?.options as DbClientOptions,
+        payload.dbName,
+        payload.options as DbClientOptions,
       );
 
       void db.watchChanges((change) => {
         self.postMessage({ event: "db:change", data: change });
       });
 
-      if (payload?.options?.sync) {
-        attachSync();
+      if (payload.options?.remoteBaseUrl) {
+        void db.startSync({
+          onChange: (info) =>
+            self.postMessage({ event: "sync:change", data: info }),
+          onPaused: (err) =>
+            self.postMessage({ event: "sync:paused", error: err }),
+          onActive: () => self.postMessage({ event: "sync:active" }),
+          onDenied: (err) =>
+            self.postMessage({ event: "sync:denied", error: err }),
+          onError: (err) => {
+            console.error("[db.worker] sync:error:", err);
+            self.postMessage({ event: "sync:error", error: err });
+          },
+        });
       }
 
-      self.postMessage({ id, result: true });
-      return;
-    }
-
-    if (type === "ENABLE_SYNC") {
-      if (!db) throw new Error("Database not initialized in worker.");
-      db.configureRemote(payload as RemoteSyncOptions);
-      attachSync();
       self.postMessage({ id, result: true });
       return;
     }

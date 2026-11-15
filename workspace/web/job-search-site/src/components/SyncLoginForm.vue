@@ -1,0 +1,80 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import { useJobDb } from "../plugins/jobDb.js";
+
+const emit = defineEmits<{
+  done: [];
+  cancel: [];
+}>();
+
+const AUTH_API_URL = "http://localhost:4000";
+const COUCH_BASE_URL = "http://localhost:5984";
+
+const { connectSync } = useJobDb();
+
+const username = ref("");
+const password = ref("");
+const error = ref<string | null>(null);
+const isLoading = ref(false);
+
+async function handleSubmit() {
+  error.value = null;
+  isLoading.value = true;
+
+  try {
+    const res = await fetch(`${AUTH_API_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value,
+      }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error ?? "Login failed");
+    }
+
+    await connectSync({
+      remoteBaseUrl: COUCH_BASE_URL,
+      remoteDbName: data.dbName,
+      token: data.token,
+    });
+
+    emit("done");
+  } catch (err: any) {
+    error.value = err?.message ?? "Could not connect";
+  } finally {
+    isLoading.value = false;
+  }
+}
+</script>
+
+<template>
+  <form @submit.prevent="handleSubmit">
+    <div>
+      <label>
+        Username
+        <input v-model="username" type="text" required />
+      </label>
+    </div>
+
+    <div>
+      <label>
+        Password
+        <input v-model="password" type="password" required />
+      </label>
+    </div>
+
+    <p v-if="error">{{ error }}</p>
+
+    <button type="submit" :disabled="isLoading">
+      {{ isLoading ? "Connecting..." : "Login & Sync" }}
+    </button>
+
+    <button type="button" :disabled="isLoading" @click="emit('cancel')">
+      Cancel
+    </button>
+  </form>
+</template>

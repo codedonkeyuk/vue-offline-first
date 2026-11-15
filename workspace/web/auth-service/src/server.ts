@@ -75,15 +75,13 @@ app.post("/login", async (req: Request<{}, {}, LoginBody>, res: Response) => {
             "Content-Type": "application/json",
             Authorization: COUCH_AUTH,
           },
-          body: JSON.stringify({
-            validate_doc_update: getCouchDesignDoc(),
-          }),
+          body: JSON.stringify(getCouchDesignDoc()),
         },
       );
 
       if (!designRes.ok) {
         console.error(
-          "Design doc failed:",
+          "Design doc rejected:",
           designRes.status,
           await designRes.text(),
         );
