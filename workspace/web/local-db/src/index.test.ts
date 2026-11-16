@@ -132,4 +132,92 @@ describe("JobSearchLocalDb", () => {
       assert.equal(afterDelete, null);
     });
   });
+
+  describe("Session & Activity Lifecycle", () => {
+    it("invokes onActivity when data operations are performed", async () => {
+      let activityCount = 0;
+      const trackedDbName = `test_activity_${crypto.randomUUID()}`;
+      const trackedDb = new JobSearchLocalDb(trackedDbName, {
+        adapter: "memory",
+        onActivity: () => {
+          activityCount += 1;
+        },
+      });
+
+      try {
+        const created = await trackedDb.saveJobApplication({
+          title: "Backend Engineer",
+          content: "Applied",
+        });
+        assert.equal(activityCount, 1);
+
+        await trackedDb.getById(created.id);
+        assert.equal(activityCount, 2);
+
+        await trackedDb.getAllByType("job_application");
+        assert.equal(activityCount, 3);
+
+        await trackedDb.remove(created.id);
+        assert.equal(activityCount, 4);
+      } finally {
+        await trackedDb.destroyLocal();
+      }
+    });
+
+    it("dynamically updates the Authorization header via setToken()", async () => {
+      const originalFetch = globalThis.fetch;
+      let lastAuthHeader: string | undefined;
+
+      globalThis.fetch = (async (
+        _input: string | URL | Request,
+        init?: RequestInit,
+      ) => {
+        const headers = init?.headers as Record<string, string> | undefined;
+        lastAuthHeader = headers?.["Authorization"];
+
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        });
+      }) as typeof fetch;
+
+      const syncDbName = `test_token_${crypto.randomUUID()}`;
+      const syncDb = new JobSearchLocalDb(syncDbName, {
+        adapter: "memory",
+        remoteBaseUrl: "http://localhost:5984",
+        token: "initial-jwt-token",
+      });
+
+      try {
+        // 1. Trigger initial sync and wait for the replication error event
+        await new Promise<void>((resolve) => {
+          void syncDb.startSync({
+            onError: () => {
+              syncDb.stopSync();
+              resolve();
+            },
+          });
+        });
+
+        assert.equal(lastAuthHeader, "Bearer initial-jwt-token");
+
+        // 2. Rotate token via setToken() and verify the next request uses the new token
+        syncDb.setToken("renewed-jwt-token");
+
+        await new Promise<void>((resolve) => {
+          void syncDb.startSync({
+            onError: () => {
+              syncDb.stopSync();
+              resolve();
+            },
+          });
+        });
+
+        assert.equal(lastAuthHeader, "Bearer renewed-jwt-token");
+      } finally {
+        globalThis.fetch = originalFetch;
+        await syncDb.destroyLocal();
+      }
+    });
+  });
 });

@@ -25,6 +25,7 @@ export interface DbClientOptions {
   remoteDbName?: string;
   token?: string;
   adapter?: string;
+  onActivity?: () => void;
 }
 
 export class JobSearchLocalDb {
@@ -32,8 +33,13 @@ export class JobSearchLocalDb {
   private remoteDb: PouchDB.Database<AppDocument> | null = null;
   private syncHandler: PouchDB.Replication.Sync<AppDocument> | null = null;
   private changesHandler: PouchDB.Core.Changes<AppDocument> | null = null;
+  private token: string | undefined;
+  private onActivity?: () => void;
 
   constructor(dbName: string, options: DbClientOptions = {}) {
+    this.token = options.token;
+    this.onActivity = options.onActivity;
+
     this.localDb = new PouchDB<AppDocument>(dbName, {
       adapter: options.adapter ?? "idb",
     });
@@ -50,8 +56,8 @@ export class JobSearchLocalDb {
               headers[key] = value;
             });
           }
-          if (options.token) {
-            headers["Authorization"] = `Bearer ${options.token}`;
+          if (this.token) {
+            headers["Authorization"] = `Bearer ${this.token}`;
           }
           return fetch(url, {
             ...opts,
@@ -61,6 +67,14 @@ export class JobSearchLocalDb {
         },
       });
     }
+  }
+
+  setToken(token: string | undefined) {
+    this.token = token;
+  }
+
+  private notifyActivity() {
+    this.onActivity?.();
   }
 
   startSync(callbacks: SyncCallbacks = {}) {
@@ -119,6 +133,7 @@ export class JobSearchLocalDb {
   async createCoverLetter(
     input: Omit<CoverLetterDoc, "_id" | "_rev" | "type" | "updatedAt">,
   ) {
+    this.notifyActivity();
     const doc: CoverLetterDoc = {
       ...input,
       _id: `cover_letter:${crypto.randomUUID()}`,
@@ -131,6 +146,7 @@ export class JobSearchLocalDb {
   }
 
   async createCv(input: Omit<CvDoc, "_id" | "_rev" | "type" | "updatedAt">) {
+    this.notifyActivity();
     const doc: CvDoc = {
       ...input,
       _id: `cv:${crypto.randomUUID()}`,
@@ -145,6 +161,7 @@ export class JobSearchLocalDb {
   async saveJobApplication(
     input: Omit<JobApplicationDoc, "type" | "updatedAt">,
   ) {
+    this.notifyActivity();
     const id = input._id ?? `job_application:${crypto.randomUUID()}`;
     let existing: JobApplicationDoc | null = null;
 
@@ -169,6 +186,7 @@ export class JobSearchLocalDb {
   async getById<T extends AppDocument = AppDocument>(
     id: string,
   ): Promise<T | null> {
+    this.notifyActivity();
     try {
       return await this.localDb.get<T>(id);
     } catch (err: any) {
@@ -178,6 +196,7 @@ export class JobSearchLocalDb {
   }
 
   async getAllByType<T extends AppDocument>(type: T["type"]): Promise<T[]> {
+    this.notifyActivity();
     const res = await this.localDb.allDocs({
       include_docs: true,
       startkey: `${type}:`,
@@ -212,6 +231,7 @@ export class JobSearchLocalDb {
   }
 
   async remove(id: string) {
+    this.notifyActivity();
     const existing = await this.localDb.get(id);
     assertValidDoc(
       { _id: existing._id, _rev: existing._rev, _deleted: true },
@@ -221,6 +241,7 @@ export class JobSearchLocalDb {
   }
 
   async destroyLocal() {
+    this.token = undefined;
     this.close();
     return this.localDb.destroy();
   }

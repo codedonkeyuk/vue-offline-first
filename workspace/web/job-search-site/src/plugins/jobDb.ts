@@ -9,16 +9,24 @@ import type {
 } from "@job-search/db-validator";
 
 export type SyncState = "idle" | "syncing" | "paused" | "error" | "denied";
+export type SessionState = "authenticated" | "unauthenticated" | "expired";
+
+export interface WorkerDbOptions extends DbClientOptions {
+  authBaseUrl?: string;
+  renewThrottleMs?: number;
+}
 
 export interface JobDbContext {
   isSyncEnabled: Ref<boolean>;
   syncState: Ref<SyncState>;
   syncError: Ref<unknown>;
+  sessionState: Ref<SessionState>;
   lastDocChange: Ref<PouchDB.Core.ChangesResponseChange<AppDocument> | null>;
 
-  connectSync: (options: DbClientOptions) => Promise<void>;
+  connectSync: (options: WorkerDbOptions) => Promise<void>;
   disconnectSync: () => Promise<void>;
   destroyLocal: () => Promise<void>;
+  logout: () => Promise<void>;
 
   createCoverLetter: (
     input: Omit<CoverLetterDoc, "_id" | "_rev" | "type" | "updatedAt">,
@@ -39,10 +47,36 @@ export interface JobDbContext {
 }
 
 const JOB_DB_KEY: InjectionKey<JobDbContext> = Symbol("JobSearchLocalDbWorker");
+const STORAGE_KEY = "job_search_sync_session";
+
+function loadSavedSession(): WorkerDbOptions | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as WorkerDbOptions) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveSession(options: WorkerDbOptions) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(options));
+  } catch {
+    // Ignore storage quota / private mode errors
+  }
+}
+
+function clearSavedSession() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Ignore
+  }
+}
 
 export function createJobDbPlugin(
   dbName: string,
-  initialOptions?: DbClientOptions,
+  initialOptions?: WorkerDbOptions,
 ) {
   return {
     install(app: App) {
@@ -51,9 +85,18 @@ export function createJobDbPlugin(
         { type: "module" },
       );
 
-      const isSyncEnabled = ref(Boolean(initialOptions?.remoteBaseUrl));
+      const savedSession = loadSavedSession();
+      const bootOptions: WorkerDbOptions = {
+        ...savedSession,
+        ...initialOptions,
+      };
+
+      const isSyncEnabled = ref(Boolean(bootOptions.remoteBaseUrl));
       const syncState = ref<SyncState>("idle");
       const syncError = ref<unknown>(null);
+      const sessionState = ref<SessionState>(
+        bootOptions.token ? "authenticated" : "unauthenticated",
+      );
       const lastDocChange =
         ref<PouchDB.Core.ChangesResponseChange<AppDocument> | null>(null);
 
@@ -62,6 +105,36 @@ export function createJobDbPlugin(
         number,
         { resolve: (val: any) => void; reject: (err: any) => void }
       >();
+
+      const send = <T = unknown>(
+        type: string,
+        payload?: unknown,
+      ): Promise<T> => {
+        const id = ++requestId;
+        return new Promise((resolve, reject) => {
+          pending.set(id, { resolve, reject });
+          worker.postMessage({ id, type, payload });
+        });
+      };
+
+      const call = <T = unknown>(
+        method: string,
+        ...args: unknown[]
+      ): Promise<T> => {
+        return send<T>("CALL", { method, args });
+      };
+
+      const resetToLocalOnly = async (nextSessionState: SessionState) => {
+        clearSavedSession();
+        isSyncEnabled.value = false;
+        syncState.value = "idle";
+        syncError.value = null;
+        sessionState.value = nextSessionState;
+        lastDocChange.value = null;
+
+        // Re-initialise an empty local-only DB so the worker stays ready for local use or next login
+        await send("INIT", { dbName, options: {} });
+      };
 
       worker.onmessage = (event: MessageEvent) => {
         const msg = event.data;
@@ -92,6 +165,19 @@ export function createJobDbPlugin(
               syncState.value = "error";
               syncError.value = msg.error;
               break;
+            case "session:renewed": {
+              const current = loadSavedSession();
+              if (current && msg.token) {
+                saveSession({ ...current, token: msg.token });
+              }
+              break;
+            }
+            case "session:expired":
+              void resetToLocalOnly("expired");
+              break;
+            case "session:logged_out":
+              void resetToLocalOnly("unauthenticated");
+              break;
           }
           return;
         }
@@ -104,28 +190,24 @@ export function createJobDbPlugin(
         }
       };
 
-      const send = <T = unknown>(
-        type: string,
-        payload?: unknown,
-      ): Promise<T> => {
-        const id = ++requestId;
-        return new Promise((resolve, reject) => {
-          pending.set(id, { resolve, reject });
-          worker.postMessage({ id, type, payload });
-        });
-      };
+      const connectSync = async (options: WorkerDbOptions) => {
+        const initialised = await send<boolean>("INIT", { dbName, options });
 
-      const call = <T = unknown>(
-        method: string,
-        ...args: unknown[]
-      ): Promise<T> => {
-        return send<T>("CALL", { method, args });
-      };
+        if (!initialised) {
+          // Worker detected that the saved token was already expired on startup
+          await resetToLocalOnly("expired");
+          return;
+        }
 
-      const connectSync = async (options: DbClientOptions) => {
-        await send("INIT", { dbName, options });
-        isSyncEnabled.value = Boolean(options.remoteBaseUrl);
-        syncState.value = options.remoteBaseUrl ? "syncing" : "idle";
+        if (options.remoteBaseUrl && options.token) {
+          saveSession(options);
+          isSyncEnabled.value = true;
+          syncState.value = "syncing";
+          sessionState.value = "authenticated";
+        } else {
+          isSyncEnabled.value = false;
+          syncState.value = "idle";
+        }
       };
 
       const disconnectSync = async () => {
@@ -136,21 +218,30 @@ export function createJobDbPlugin(
 
       const destroyLocal = async () => {
         await send("DESTROY");
+        clearSavedSession();
         isSyncEnabled.value = false;
         syncState.value = "idle";
+        sessionState.value = "unauthenticated";
         lastDocChange.value = null;
       };
 
-      void connectSync(initialOptions ?? {});
+      const logout = async () => {
+        // Worker stops sync, calls POST /logout, destroys IndexedDB, and emits session:logged_out
+        await send("LOGOUT");
+      };
+
+      void connectSync(bootOptions);
 
       app.provide(JOB_DB_KEY, {
         isSyncEnabled,
         syncState,
         syncError,
+        sessionState,
         lastDocChange,
         connectSync,
         disconnectSync,
         destroyLocal,
+        logout,
         createCoverLetter: (input) => call("createCoverLetter", input),
         createCv: (input) => call("createCv", input),
         saveJobApplication: (input) => call("saveJobApplication", input),

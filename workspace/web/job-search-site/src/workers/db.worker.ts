@@ -1,6 +1,93 @@
 import { JobSearchLocalDb, type DbClientOptions } from "@job-search/local-db";
 
+export interface WorkerDbOptions extends DbClientOptions {
+  authBaseUrl?: string;
+  renewThrottleMs?: number;
+}
+
 let db: JobSearchLocalDb | null = null;
+let currentToken: string | undefined;
+let authBaseUrl: string | undefined;
+let lastRenewedAt = 0;
+let renewInFlight: Promise<void> | null = null;
+let renewThrottleMs = 5 * 60 * 1000; // Default: throttle renewals to once per 5 mins
+
+function isTokenExpired(token: string): boolean {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) return true;
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const payload = JSON.parse(atob(base64));
+    if (typeof payload.exp !== "number") return false;
+    return Date.now() >= payload.exp * 1000;
+  } catch {
+    return true;
+  }
+}
+
+async function teardownSession(reason: "expired" | "logged_out") {
+  currentToken = undefined;
+  lastRenewedAt = 0;
+
+  if (db) {
+    await db.destroyLocal();
+    db = null;
+  }
+
+  self.postMessage({
+    event: reason === "expired" ? "session:expired" : "session:logged_out",
+  });
+}
+
+async function handleActivity() {
+  if (!currentToken || !authBaseUrl || !db) return;
+
+  // If the token expired while the tab was backgrounded/sleeping, tear down immediately
+  if (isTokenExpired(currentToken)) {
+    await teardownSession("expired");
+    return;
+  }
+
+  const now = Date.now();
+  if (now - lastRenewedAt < renewThrottleMs) {
+    return;
+  }
+
+  // Deduplicate concurrent renewals if multiple DB calls fire at once
+  if (renewInFlight) return;
+
+  const cleanAuthUrl = authBaseUrl.replace(/\/$/, "");
+  const tokenToRenew = currentToken;
+
+  renewInFlight = (async () => {
+    try {
+      const res = await fetch(`${cleanAuthUrl}/renew`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${tokenToRenew}`,
+        },
+      });
+
+      if (res.ok) {
+        const data = (await res.json()) as { token?: string };
+        if (data.token && db && currentToken === tokenToRenew) {
+          currentToken = data.token;
+          lastRenewedAt = Date.now();
+          db.setToken(data.token);
+          self.postMessage({ event: "session:renewed", token: data.token });
+        }
+      } else if (res.status === 401) {
+        await teardownSession("expired");
+      }
+    } catch {
+      // Offline or transient network failure: leave lastRenewedAt unchanged so next activity retries
+    } finally {
+      renewInFlight = null;
+    }
+  })();
+
+  await renewInFlight;
+}
 
 self.onmessage = async (event: MessageEvent) => {
   const { id, type, payload } = event.data;
@@ -8,16 +95,32 @@ self.onmessage = async (event: MessageEvent) => {
   try {
     if (type === "INIT") {
       db?.close();
-      db = new JobSearchLocalDb(
-        payload.dbName,
-        payload.options as DbClientOptions,
-      );
+
+      const options = (payload.options ?? {}) as WorkerDbOptions;
+      currentToken = options.token;
+      authBaseUrl = options.authBaseUrl;
+      renewThrottleMs = options.renewThrottleMs ?? 5 * 60 * 1000;
+      lastRenewedAt = Date.now();
+
+      db = new JobSearchLocalDb(payload.dbName, {
+        ...options,
+        onActivity: () => {
+          void handleActivity();
+        },
+      });
+
+      // If the persisted token already expired while the app was closed, wipe local DB immediately
+      if (currentToken && isTokenExpired(currentToken)) {
+        await teardownSession("expired");
+        self.postMessage({ id, result: false });
+        return;
+      }
 
       void db.watchChanges((change) => {
         self.postMessage({ event: "db:change", data: change });
       });
 
-      if (payload.options?.remoteBaseUrl) {
+      if (options.remoteBaseUrl) {
         db.startSync({
           onChange: (info) =>
             self.postMessage({ event: "sync:change", data: info }),
@@ -32,6 +135,11 @@ self.onmessage = async (event: MessageEvent) => {
             });
           },
           onError: (err) => {
+            if (err?.status === 401) {
+              void teardownSession("expired");
+              return;
+            }
+
             const details = JSON.stringify(
               err,
               Object.getOwnPropertyNames(err ?? {}),
@@ -55,7 +163,33 @@ self.onmessage = async (event: MessageEvent) => {
       return;
     }
 
+    if (type === "LOGOUT") {
+      const tokenToRevoke = currentToken;
+      const cleanAuthUrl = authBaseUrl?.replace(/\/$/, "");
+
+      // Stop replication immediately before revoking
+      db?.stopSync();
+
+      if (tokenToRevoke && cleanAuthUrl) {
+        try {
+          await fetch(`${cleanAuthUrl}/logout`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${tokenToRevoke}`,
+            },
+          });
+        } catch {
+          // Offline during logout: proceed with local wipe regardless
+        }
+      }
+
+      await teardownSession("logged_out");
+      self.postMessage({ id, result: true });
+      return;
+    }
+
     if (type === "DESTROY") {
+      currentToken = undefined;
       if (db) {
         await db.destroyLocal();
         db = null;
