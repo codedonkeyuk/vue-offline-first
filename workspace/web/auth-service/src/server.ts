@@ -1,7 +1,7 @@
 import express, { type Request, type Response } from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
-import { getCouchDesignDoc } from "@job-search/db-validator";
+import { getCouchDesignDoc } from "@job-search/db-config";
 
 export const app = express();
 app.use(cors());

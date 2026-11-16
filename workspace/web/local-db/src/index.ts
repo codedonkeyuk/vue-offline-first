@@ -8,7 +8,7 @@ import {
   type CoverLetterDoc,
   type CvDoc,
   type JobApplicationDoc,
-} from "@job-search/db-validator";
+} from "@job-search/db-config";
 
 PouchDB.plugin(IDBAdapter).plugin(HttpAdapter).plugin(Replication);
 

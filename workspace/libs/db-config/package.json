@@ -1,5 +1,5 @@
 {
-  "name": "@job-search/db-validator",
+  "name": "@job-search/db-config",
   "version": "0.0.1",
   "description": "A implementation of a pouchdb database for use within a web application",
   "license": "MIT",

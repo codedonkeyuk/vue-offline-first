@@ -6,7 +6,7 @@ import type {
   CoverLetterDoc,
   CvDoc,
   JobApplicationDoc,
-} from "@job-search/db-validator";
+} from "@job-search/db-config";
 
 export type SyncState = "idle" | "syncing" | "paused" | "error" | "denied";
 export type SessionState = "authenticated" | "unauthenticated" | "expired";

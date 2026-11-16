@@ -1,4 +1,4 @@
-# db-validator
+# db-config
 
 Used to validate / constrain both couchdb and pouchdb databases.
 
