@@ -11,7 +11,8 @@
     "url": "git+https://github.comcodedonkeyuk/job-search.git"
   },
   "workspaces": [
-    "./workspace/libs/*",
+    "./workspace/database/*",
+    "./workspace/service/*",
     "./workspace/web/*"
   ],
   "private": true,
