@@ -7,8 +7,8 @@ const emit = defineEmits<{
   cancel: [];
 }>();
 
-const AUTH_API_URL = "http://localhost:4000";
-const COUCH_BASE_URL = "http://localhost:5984";
+const AUTH_API_URL = import.meta.env.VITE_AUTH_API_URL;
+const COUCH_BASE_URL = import.meta.env.VITE_COUCH_BASE_URL;
 
 const { connectSync } = useJobDb();
 

@@ -13,8 +13,8 @@
   ],
   "scripts": {
     "dev": "vite",
-    "serveDev": "vite --open",
-    "serveProd": "vite preview --open",
+    "serveDev": "vite --open --mode development",
+    "serveProd": "vite preview --open --mode production",
     "prebuild": "prettier . --check && tsc --noEmit",
     "build": "vite build",
     "test": "vitest run",
