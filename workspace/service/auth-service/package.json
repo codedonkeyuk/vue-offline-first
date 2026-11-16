@@ -7,8 +7,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "serve": "node --watch ./src/server.ts",
-    "test": "node --test src/**/*.test.ts"
+    "serve": "node --env-file=../../../.env.development --watch ./src/server.ts",
+    "test": "node --env-file=../../../.env.development --test src/**/*.test.ts"
   },
   "dependencies": {
     "@job-search/db-config": "*",

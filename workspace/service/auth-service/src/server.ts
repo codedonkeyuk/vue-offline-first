@@ -7,10 +7,37 @@ export const app = express();
 app.use(cors());
 app.use(express.json());
 
-const COUCH_URL = process.env.COUCHDB_URL ?? "http://localhost:5984";
-const COUCH_AUTH = `Basic ${Buffer.from("admin:password").toString("base64")}`;
-const JWT_SECRET = process.env.JWT_SECRET ?? "local-dev-secret";
-const SESSION_TTL = "30m";
+interface JwtClaims extends jwt.JwtPayload {
+  sub: string;
+  username: string;
+}
+
+function isJwtClaims(payload: string | jwt.JwtPayload): payload is JwtClaims {
+  return (
+    typeof payload === "object" &&
+    payload !== null &&
+    typeof payload.sub === "string" &&
+    typeof payload.username === "string"
+  );
+}
+
+function getRequiredEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
+}
+
+const COUCH_URL = getRequiredEnv("COUCHDB_URL");
+const COUCH_USER = getRequiredEnv("COUCHDB_USER");
+const COUCH_PASSWORD = getRequiredEnv("COUCHDB_PASSWORD");
+const JWT_SECRET = getRequiredEnv("JWT_SECRET");
+
+const COUCH_AUTH = `Basic ${Buffer.from(`${COUCH_USER}:${COUCH_PASSWORD}`).toString("base64")}`;
+
+// Parse SESSION_TTL to a number with a fallback (e.g., 3600 seconds)
+const SESSION_TTL = Number(process.env.SESSION_TTL) || 3600;
 
 interface DevUser {
   id: string;
@@ -140,7 +167,11 @@ app.post("/renew", (req: Request, res: Response) => {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as JwtClaims;
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    if (!isJwtClaims(decoded)) {
+      return res.status(401).json({ error: "Invalid token payload" });
+    }
     const newToken = signSessionToken(decoded.sub, decoded.username);
     res.json({ token: newToken });
   } catch {
