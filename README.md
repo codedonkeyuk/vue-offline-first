@@ -4,9 +4,20 @@ This is a full stack application designed to help job seekers match to suitable 
 
 ## Reason behind the Project
 
-I undertook an interview recently which was a total nightmare all because of the companies actions. The company did not get back to me for 3 months, they pulled all the job adverts weeks before the interview. I believe all of these issues were due to their use of a cloud platform. So a simple 15 minute interview became a minefield, and I hit each and every mine. It was awful and entirely their fault.
+I undertook an interview recently which was a total nightmare all because of the companies inconsiderate actions. The company did not get back to me for 3 months, they pulled the job advert weeks before the interview, and they did not read my CV only an AI summary so we had not much to talk about. All of these issues were due to their use of a cloud platform. So a simple 15 minute interview became a minefield, and I certainly hit each and every mine. It was awful and it was **entirely their fault**.
 
 I decided after a day of blaming myself that enough was enough, I need my own AI tool to avoid this nightmare scenario in future.
+
+## Project Structure
+
+This is multi-module project spanning an entire scope of a fullstack project. CouchDB is not JS based, so it is launched as a separate docker service. The project is split into three separate directories src/database, src/services, src/web to represent the fullstack.
+
+| Project                       | description                                                        |
+| ----------------------------- | ------------------------------------------------------------------ |
+| `src/database/db-config`      | Db configuration for both couch db and pouch db instances          |
+| `src/service/auth-service`    | Authentication service responsible for all auth actions. JWT based |
+| `src/service/job-search-site` | Job search Single Page Application                                 |
+| `src/service/local-db`        | PouchDB database logic for use within a web worker                 |
 
 ## Commands
 
