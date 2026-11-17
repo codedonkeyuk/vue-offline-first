@@ -1,14 +1,14 @@
 {
-  "name": "job-search",
+  "name": "vue-offline-first",
   "version": "0.0.12",
   "description": "A fullstack application to help with job searchs",
-  "homepage": "https://github.com/codedonkeyuk/job-search#readme",
+  "homepage": "https://github.com/codedonkeyuk/vue-offline-first#readme",
   "bugs": {
-    "url": "https://github.com/codedonkeyuk/job-searchissues"
+    "url": "https://github.com/codedonkeyuk/vue-offline-firstissues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.comcodedonkeyuk/job-search.git"
+    "url": "git+https://github.comcodedonkeyuk/vue-offline-first.git"
   },
   "workspaces": [
     "./workspace/database/*",

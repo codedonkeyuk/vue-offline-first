@@ -1,12 +1,6 @@
-# job-search
+# vue-offline-first
 
-This is a full stack application designed to help job seekers match to suitable jobs, track job applications and keep an archive of useful information for each job.
-
-## Reason behind the Project
-
-I undertook an interview recently which was a total nightmare all because of the companies inconsiderate actions. The company did not get back to me for 3 months, they pulled the job advert weeks before the interview, and they did not read my CV only an AI summary so we had not much to talk about. All of these issues were due to their use of a cloud platform. So a simple 15 minute interview became a minefield, and I certainly hit each and every mine. It was awful and it was **entirely their fault**.
-
-I decided after a day of blaming myself that enough was enough, I need my own AI tool to avoid this nightmare scenario in future.
+This is a starter template for offline first application. It uses CouchDb in the backend and PouchDb in the frontend.
 
 ## Project Structure
 
