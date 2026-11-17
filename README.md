@@ -6,12 +6,12 @@ This is a starter template for offline first application. It uses CouchDb in the
 
 This is multi-module project spanning an entire scope of a fullstack project. CouchDB is not JS based, so it is launched as a separate docker service. The project is split into three separate directories src/database, src/services, src/web to represent the fullstack.
 
-| Project                       | description                                                        |
-| ----------------------------- | ------------------------------------------------------------------ |
-| `src/database/db-config`      | Db configuration for both couch db and pouch db instances          |
-| `src/service/auth-service`    | Authentication service responsible for all auth actions. JWT based |
-| `src/service/job-search-site` | Job search Single Page Application                                 |
-| `src/service/local-db`        | PouchDB database logic for use within a web worker                 |
+| Project                    | description                                                        |
+| -------------------------- | ------------------------------------------------------------------ |
+| `src/database/db-config`   | Db configuration for both couch db and pouch db instances          |
+| `src/service/auth-service` | Authentication service responsible for all auth actions. JWT based |
+| `src/service/site`         | Job search Single Page Application                                 |
+| `src/service/local-db`     | PouchDB database logic for use within a web worker                 |
 
 ## Commands
 
