@@ -20,7 +20,7 @@
   "scripts": {
     "serve": "concurrently -k -n auth,web -c cyan,magenta \"npm run serve -w @vue-offline-first/auth-service\" \"npm run serveDev -w @vue-offline-first/site\"",
     "clean": "prettier . --write && npx oxlint --type-aware --fix",
-    "validate": "prettier . --check && npx cspell --exclude \"**/node_modules/**\" **/*.md",
+    "validate": "prettier . --check && npx oxlint && npx cspell --exclude \"**/node_modules/**\" **/*.md",
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present"
   },
