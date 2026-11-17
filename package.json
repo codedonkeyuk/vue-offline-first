@@ -11,7 +11,8 @@
     "url": "git+https://github.comcodedonkeyuk/vue-offline-first.git"
   },
   "workspaces": [
-    "./workspace/database/*",
+    "./workspace/database/local-db",
+    "./workspace/database/db-config",
     "./workspace/service/*",
     "./workspace/web/*"
   ],
