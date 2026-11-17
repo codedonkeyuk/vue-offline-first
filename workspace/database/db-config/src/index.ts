@@ -9,7 +9,15 @@ import type {
   JobApplicationDoc,
   AppDocument,
 } from "./types.ts";
+import JobDb, { type JobDbOptions } from "./JobDB.ts";
 
-export { validateDocUpdate, assertValidDoc, getCouchDesignDoc };
+export { JobDb, validateDocUpdate, assertValidDoc, getCouchDesignDoc };
 
-export type { BaseDoc, CoverLetterDoc, CvDoc, JobApplicationDoc, AppDocument };
+export type {
+  BaseDoc,
+  CoverLetterDoc,
+  CvDoc,
+  JobApplicationDoc,
+  AppDocument,
+  JobDbOptions,
+};

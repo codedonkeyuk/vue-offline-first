@@ -2,7 +2,7 @@ import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import PouchDB from "pouchdb-core";
 import memoryAdapter from "pouchdb-adapter-memory";
-import JobDb from "./index.ts";
+import JobDb from "./JobDB.ts";
 
 PouchDB.plugin(memoryAdapter);
 

@@ -32,7 +32,7 @@
     "vitest": "^4.1.10"
   },
   "dependencies": {
-    "@job-search/local-db": "*",
+    "@job-search/db-config": "*",
     "events": "^3.3.0",
     "vue": "^3.5.45"
   }

@@ -2,7 +2,7 @@ import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import PouchDB from "pouchdb-core";
 import memoryAdapter from "pouchdb-adapter-memory";
-import LocalDb, { type BaseDocument } from "./LocalDb.ts";
+import LocalDb, { type BaseDocument } from "./index.ts";
 
 PouchDB.plugin(memoryAdapter);
 

@@ -1,15 +1,16 @@
+import type {} from "pouchdb-core";
 import LocalDb, {
   type BaseDocument,
   type DbClientOptions,
   type SyncCallbacks,
-} from "./LocalDb.ts";
+} from "@job-search/local-db";
 import {
-  assertValidDoc,
   type AppDocument,
   type CoverLetterDoc,
   type CvDoc,
   type JobApplicationDoc,
-} from "@job-search/db-config";
+} from "./types.ts";
+import { assertValidDoc } from "./validateDocUpdate.ts";
 
 type JobDbDoc = AppDocument & BaseDocument;
 

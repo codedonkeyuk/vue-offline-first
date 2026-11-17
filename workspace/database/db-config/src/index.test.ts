@@ -5,9 +5,11 @@ import expectedValidateDocUpdate, {
   assertValidDoc as expectedAssertValidDoc,
   getCouchDesignDoc as expectedGetCouchDesignDoc,
 } from "./validateDocUpdate.ts";
+import expectedJobDb from "./JobDB.ts";
 
 describe("index.ts entry point", () => {
-  it("re-exports the exact validation functions", () => {
+  it("re-exports the exact runtime values", () => {
+    assert.strictEqual(entryPoint.JobDb, expectedJobDb);
     assert.strictEqual(entryPoint.validateDocUpdate, expectedValidateDocUpdate);
     assert.strictEqual(entryPoint.assertValidDoc, expectedAssertValidDoc);
     assert.strictEqual(entryPoint.getCouchDesignDoc, expectedGetCouchDesignDoc);
@@ -16,6 +18,7 @@ describe("index.ts entry point", () => {
   it("does not expose unexpected runtime exports", () => {
     const exportedKeys = Object.keys(entryPoint).sort();
     assert.deepStrictEqual(exportedKeys, [
+      "JobDb",
       "assertValidDoc",
       "getCouchDesignDoc",
       "validateDocUpdate",

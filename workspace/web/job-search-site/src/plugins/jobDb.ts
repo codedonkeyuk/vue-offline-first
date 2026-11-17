@@ -1,6 +1,6 @@
 import type {} from "pouchdb-core";
 import { inject, ref, type App, type InjectionKey, type Ref } from "vue";
-import type { JobDbOptions } from "@job-search/local-db";
+import type { JobDbOptions } from "@job-search/db-config";
 import type {
   AppDocument,
   CoverLetterDoc,
