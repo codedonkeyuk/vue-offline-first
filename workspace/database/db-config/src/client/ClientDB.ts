@@ -4,13 +4,7 @@ import LocalDb, {
   type DbClientOptions,
   type SyncCallbacks,
 } from "@vue-offline-first/local-db";
-import {
-  type AppDocument,
-  type CoverLetterDoc,
-  type CvDoc,
-  type JobApplicationDoc,
-  type TextDoc,
-} from "../types.ts";
+import { type AppDocument, type TextDoc } from "../types.ts";
 import { assertValidDoc } from "../validation/validateDocUpdate.ts";
 
 type ClientDbDoc = AppDocument & BaseDocument;
@@ -56,53 +50,6 @@ export default class ClientDb {
     return this.db.watchChanges(onDocChange);
   }
 
-  async createCoverLetter(
-    input: Omit<CoverLetterDoc, "_id" | "_rev" | "type" | "updatedAt">,
-  ) {
-    this.notifyActivity();
-    const doc: CoverLetterDoc & BaseDocument = {
-      ...input,
-      _id: `cover_letter:${crypto.randomUUID()}`,
-      type: "cover_letter",
-      updatedAt: new Date().toISOString(),
-    };
-
-    assertValidDoc(doc, null);
-    return this.db.put(doc);
-  }
-
-  async createCv(input: Omit<CvDoc, "_id" | "_rev" | "type" | "updatedAt">) {
-    this.notifyActivity();
-    const doc: CvDoc & BaseDocument = {
-      ...input,
-      _id: `cv:${crypto.randomUUID()}`,
-      type: "cv",
-      updatedAt: new Date().toISOString(),
-    };
-
-    assertValidDoc(doc, null);
-    return this.db.put(doc);
-  }
-
-  async saveJobApplication(
-    input: Omit<JobApplicationDoc, "type" | "updatedAt">,
-  ) {
-    this.notifyActivity();
-    const id = input._id ?? `job_application:${crypto.randomUUID()}`;
-    const existing = (await this.db.getById(id)) as JobApplicationDoc | null;
-
-    const doc: JobApplicationDoc & BaseDocument = {
-      ...existing,
-      ...input,
-      _id: id,
-      type: "job_application",
-      updatedAt: new Date().toISOString(),
-    };
-
-    assertValidDoc(doc, existing);
-    return this.db.put(doc);
-  }
-
   async saveTextDocument(input: Omit<TextDoc, "type" | "updatedAt">) {
     this.notifyActivity();
     const id = input._id ?? `text_document:${crypto.randomUUID()}`;
@@ -130,28 +77,6 @@ export default class ClientDb {
   async getAllByType<T extends AppDocument>(type: T["type"]): Promise<T[]> {
     this.notifyActivity();
     return this.db.getAllByType(type) as Promise<T[]>;
-  }
-
-  async getCoverLetterVersions(
-    coverLetterId: string,
-  ): Promise<CoverLetterDoc[]> {
-    const all = await this.getAllByType<CoverLetterDoc>("cover_letter");
-    return all
-      .filter((doc) => doc.coverLetterId === coverLetterId)
-      .sort(
-        (a, b) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-      );
-  }
-
-  async getCvVersions(cvId: string): Promise<CvDoc[]> {
-    const all = await this.getAllByType<CvDoc>("cv");
-    return all
-      .filter((doc) => doc.cvId === cvId)
-      .sort(
-        (a, b) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-      );
   }
 
   async remove(id: string) {

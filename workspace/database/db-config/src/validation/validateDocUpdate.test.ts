@@ -5,7 +5,7 @@ import validateDocUpdate, {
   assertValidDoc,
   getCouchDesignDoc,
 } from "./validateDocUpdate.ts";
-import type { CoverLetterDoc, CvDoc, JobApplicationDoc } from "../types.ts";
+import type { TextDoc } from "../types.ts";
 
 const validTimestamp = new Date().toISOString();
 const standardUser = { roles: [] };
@@ -25,7 +25,7 @@ describe("CouchDB & Shared Document Validation", () => {
         validateDocUpdate(
           {
             _id: "_design/views",
-            type: "job_application",
+            type: "text_document",
             updatedAt: validTimestamp,
           },
           null,
@@ -36,10 +36,10 @@ describe("CouchDB & Shared Document Validation", () => {
   });
 
   describe("2. Deletion Rules", () => {
-    it("allows deleting mutable documents (job_application)", () => {
-      const existingApp: JobApplicationDoc = {
+    it("allows deleting mutable documents (text_document)", () => {
+      const existingApp: TextDoc = {
         _id: "job_1",
-        type: "job_application",
+        type: "text_document",
         title: "Frontend Dev",
         updatedAt: validTimestamp,
       };
@@ -50,26 +50,6 @@ describe("CouchDB & Shared Document Validation", () => {
           existingApp,
           standardUser,
         ),
-      );
-    });
-
-    it("blocks deleting immutable documents (cover_letter and cv)", () => {
-      const existingCv: CvDoc = {
-        _id: "cv_1",
-        type: "cv",
-        cvId: "master_cv",
-        title: "My CV",
-        updatedAt: validTimestamp,
-      };
-
-      assert.throws(
-        () =>
-          validateDocUpdate(
-            { _id: "cv_1", _deleted: true },
-            existingCv,
-            standardUser,
-          ),
-        { forbidden: "Immutable records of type cv cannot be deleted." },
       );
     });
   });
@@ -88,8 +68,8 @@ describe("CouchDB & Shared Document Validation", () => {
     });
 
     it("prevents changing document type on update", () => {
-      const oldDoc: JobApplicationDoc = {
-        type: "job_application",
+      const oldDoc: TextDoc = {
+        type: "text_document",
         title: "Role",
         updatedAt: validTimestamp,
       };
@@ -107,14 +87,14 @@ describe("CouchDB & Shared Document Validation", () => {
 
     it("rejects fields not in the schema whitelist", () => {
       const badDoc = {
-        type: "job_application",
+        type: "text_document",
         title: "Engineer",
         updatedAt: validTimestamp,
         unexpectedField: "hack",
       };
 
       assert.throws(() => validateDocUpdate(badDoc, null, standardUser), {
-        forbidden: "Field not allowed for job_application: unexpectedField",
+        forbidden: "Field not allowed for text_document: unexpectedField",
       });
     });
   });
@@ -122,15 +102,15 @@ describe("CouchDB & Shared Document Validation", () => {
   describe("4. Content & Timestamp Validation", () => {
     it("rejects content exceeding 5000 characters", () => {
       const longContent = "a".repeat(5001);
-      const doc: JobApplicationDoc = {
-        type: "job_application",
+      const doc: TextDoc = {
+        type: "text_document",
         title: "Long App",
         content: longContent,
         updatedAt: validTimestamp,
       };
 
       assert.throws(() => validateDocUpdate(doc, null, standardUser), {
-        forbidden: "Content for job_application must be under 5000 characters.",
+        forbidden: "Content for text_document must be under 5000 characters.",
       });
     });
 
@@ -138,7 +118,7 @@ describe("CouchDB & Shared Document Validation", () => {
       assert.throws(
         () =>
           validateDocUpdate(
-            { type: "job_application", title: "No Date" },
+            { type: "text_document", title: "No Date" },
             null,
             standardUser,
           ),
@@ -149,7 +129,7 @@ describe("CouchDB & Shared Document Validation", () => {
         () =>
           validateDocUpdate(
             {
-              type: "job_application",
+              type: "text_document",
               title: "Bad Date",
               updatedAt: "not-a-date",
             },
@@ -162,14 +142,14 @@ describe("CouchDB & Shared Document Validation", () => {
   });
 
   describe("5. Mutable vs Immutable Schemas", () => {
-    it("allows creating and updating a job_application", () => {
-      const initial: JobApplicationDoc = {
-        type: "job_application",
+    it("allows creating and updating a text_document", () => {
+      const initial: TextDoc = {
+        type: "text_document",
         title: "Acme Corp",
         content: "Applied today",
         updatedAt: validTimestamp,
       };
-      const updated: JobApplicationDoc = {
+      const updated: TextDoc = {
         ...initial,
         content: "Interview scheduled",
         updatedAt: new Date().toISOString(),
@@ -180,56 +160,12 @@ describe("CouchDB & Shared Document Validation", () => {
         validateDocUpdate(updated, initial, standardUser),
       );
     });
-
-    it("allows creating a cover_letter with coverLetterId, but blocks updates", () => {
-      const coverLetter: CoverLetterDoc = {
-        type: "cover_letter",
-        coverLetterId: "cl_group_1",
-        title: "v1",
-        content: "Dear Hiring Manager...",
-        updatedAt: validTimestamp,
-      };
-
-      assert.doesNotThrow(() =>
-        validateDocUpdate(coverLetter, null, standardUser),
-      );
-
-      assert.throws(
-        () =>
-          validateDocUpdate(
-            { ...coverLetter, title: "v2" },
-            coverLetter,
-            standardUser,
-          ),
-        {
-          forbidden:
-            "Records of type cover_letter are immutable and cannot be modified.",
-        },
-      );
-    });
-
-    it("requires linkField (cvId / coverLetterId) on immutable records", () => {
-      const missingLinkCv = {
-        type: "cv",
-        title: "Orphan CV",
-        updatedAt: validTimestamp,
-      };
-
-      assert.throws(
-        () => validateDocUpdate(missingLinkCv, null, standardUser),
-        {
-          forbidden:
-            "Non-mutable records of type cv must have a cvId reference.",
-        },
-      );
-    });
   });
 
   describe("6. Express/PouchDB Helper (assertValidDoc) & CouchDB Serialization", () => {
     it("converts CouchDB { forbidden } throws into standard Error with status 403", () => {
       assert.throws(
-        () =>
-          assertValidDoc({ type: "job_application", title: "Missing date" }),
+        () => assertValidDoc({ type: "text_document", title: "Missing date" }),
         (err: unknown) => {
           assert.ok(err instanceof Error);
           assert.equal((err as Error & { status?: number }).status, 403);

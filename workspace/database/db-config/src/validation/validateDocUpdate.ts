@@ -6,49 +6,6 @@ function validateDocUpdate(
   userCtx: { roles: string[] },
 ): void {
   var SCHEMA_CONFIGS: Record<string, any> = {
-    cover_letter: {
-      mutable: false,
-      linkField: "coverLetterId",
-      allowedFields: [
-        "_id",
-        "_rev",
-        "_revisions",
-        "type",
-        "title",
-        "content",
-        "updatedAt",
-        "coverLetterId",
-      ],
-      maxContent: 5000,
-    },
-    cv: {
-      mutable: false,
-      linkField: "cvId",
-      allowedFields: [
-        "_id",
-        "_rev",
-        "_revisions",
-        "type",
-        "title",
-        "content",
-        "updatedAt",
-        "cvId",
-      ],
-      maxContent: 5000,
-    },
-    job_application: {
-      mutable: true,
-      allowedFields: [
-        "_id",
-        "_rev",
-        "_revisions",
-        "type",
-        "title",
-        "content",
-        "updatedAt",
-      ],
-      maxContent: 5000,
-    },
     text_document: {
       mutable: true,
       allowedFields: [

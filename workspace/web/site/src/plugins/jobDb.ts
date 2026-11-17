@@ -1,13 +1,7 @@
 import type {} from "pouchdb-core";
 import { inject, ref, type App, type InjectionKey, type Ref } from "vue";
 import type { ClientDbOptions } from "@vue-offline-first/db-config";
-import type {
-  AppDocument,
-  CoverLetterDoc,
-  CvDoc,
-  JobApplicationDoc,
-  TextDoc,
-} from "@vue-offline-first/db-config";
+import type { AppDocument, TextDoc } from "@vue-offline-first/db-config";
 
 export type SyncState = "idle" | "syncing" | "paused" | "error" | "denied";
 export type SessionState = "authenticated" | "unauthenticated" | "expired";
@@ -28,16 +22,6 @@ export interface JobDbContext {
   disconnectSync: () => Promise<void>;
   destroyLocal: () => Promise<void>;
   logout: () => Promise<void>;
-
-  createCoverLetter: (
-    input: Omit<CoverLetterDoc, "_id" | "_rev" | "type" | "updatedAt">,
-  ) => Promise<PouchDB.Core.Response>;
-  createCv: (
-    input: Omit<CvDoc, "_id" | "_rev" | "type" | "updatedAt">,
-  ) => Promise<PouchDB.Core.Response>;
-  saveJobApplication: (
-    input: Omit<JobApplicationDoc, "type" | "updatedAt">,
-  ) => Promise<PouchDB.Core.Response>;
   saveTextDoc: (
     input: Omit<TextDoc, "type" | "updatedAt">,
   ) => Promise<PouchDB.Core.Response>;
@@ -45,8 +29,6 @@ export interface JobDbContext {
     id: string,
   ) => Promise<T | null>;
   getAllByType: <T extends AppDocument>(type: T["type"]) => Promise<T[]>;
-  getCoverLetterVersions: (coverLetterId: string) => Promise<CoverLetterDoc[]>;
-  getCvVersions: (cvId: string) => Promise<CvDoc[]>;
   remove: (id: string) => Promise<PouchDB.Core.Response>;
 }
 
@@ -246,15 +228,9 @@ export function createJobDbPlugin(
         disconnectSync,
         destroyLocal,
         logout,
-        createCoverLetter: (input) => call("createCoverLetter", input),
-        createCv: (input) => call("createCv", input),
-        saveJobApplication: (input) => call("saveJobApplication", input),
         saveTextDoc: (input) => call("saveTextDocument", input),
         getById: (id) => call("getById", id),
         getAllByType: (type) => call("getAllByType", type),
-        getCoverLetterVersions: (coverLetterId) =>
-          call("getCoverLetterVersions", coverLetterId),
-        getCvVersions: (cvId) => call("getCvVersions", cvId),
         remove: (id) => call("remove", id),
       });
     },
