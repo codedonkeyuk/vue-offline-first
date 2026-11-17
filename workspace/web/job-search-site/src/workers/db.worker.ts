@@ -1,11 +1,11 @@
-import { JobDb, type JobDbOptions } from "@job-search/db-config";
+import { ClientDb, type ClientDbOptions } from "@job-search/db-config";
 
-export interface WorkerDbOptions extends JobDbOptions {
+export interface WorkerDbOptions extends ClientDbOptions {
   authBaseUrl?: string;
   renewThrottleMs?: number;
 }
 
-let db: JobDb | null = null;
+let db: ClientDb | null = null;
 let currentToken: string | undefined;
 let authBaseUrl: string | undefined;
 let lastRenewedAt = 0;
@@ -100,7 +100,7 @@ self.onmessage = async (event: MessageEvent) => {
       renewThrottleMs = options.renewThrottleMs ?? 5 * 60 * 1000;
       lastRenewedAt = Date.now();
 
-      db = new JobDb(payload.dbName, {
+      db = new ClientDb(payload.dbName, {
         ...options,
         onActivity: () => {
           void handleActivity();

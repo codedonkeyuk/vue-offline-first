@@ -8,8 +8,14 @@ import type {
   JobApplicationDoc,
   AppDocument,
 } from "./types.ts";
-import JobDb from "./client/JobDB.ts";
+import ClientDb, { type ClientDbOptions } from "./client/ClientDB.ts";
 
-export { JobDb, validateDocUpdate, getCouchDesignDoc, assertValidDoc };
+export { ClientDb, validateDocUpdate, getCouchDesignDoc, assertValidDoc };
 
-export type { CoverLetterDoc, CvDoc, JobApplicationDoc, AppDocument };
+export type {
+  CoverLetterDoc,
+  CvDoc,
+  JobApplicationDoc,
+  AppDocument,
+  ClientDbOptions,
+};

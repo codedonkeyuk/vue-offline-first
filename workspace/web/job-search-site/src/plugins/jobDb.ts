@@ -1,6 +1,6 @@
 import type {} from "pouchdb-core";
 import { inject, ref, type App, type InjectionKey, type Ref } from "vue";
-import type { JobDbOptions } from "@job-search/db-config";
+import type { ClientDbOptions } from "@job-search/db-config";
 import type {
   AppDocument,
   CoverLetterDoc,
@@ -11,7 +11,7 @@ import type {
 export type SyncState = "idle" | "syncing" | "paused" | "error" | "denied";
 export type SessionState = "authenticated" | "unauthenticated" | "expired";
 
-export interface WorkerDbOptions extends JobDbOptions {
+export interface WorkerDbOptions extends ClientDbOptions {
   authBaseUrl?: string;
   renewThrottleMs?: number;
 }

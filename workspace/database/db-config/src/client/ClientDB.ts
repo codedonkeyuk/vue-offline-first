@@ -12,19 +12,19 @@ import {
 } from "../types.ts";
 import { assertValidDoc } from "../validation/validateDocUpdate.ts";
 
-type JobDbDoc = AppDocument & BaseDocument;
+type ClientDbDoc = AppDocument & BaseDocument;
 
-export interface JobDbOptions extends DbClientOptions {
+export interface ClientDbOptions extends DbClientOptions {
   onActivity?: () => void;
 }
 
-export default class JobDb {
-  private db: LocalDb<JobDbDoc>;
+export default class ClientDb {
+  private db: LocalDb<ClientDbDoc>;
   private onActivity?: () => void;
 
-  constructor(dbName: string, options: JobDbOptions = {}) {
+  constructor(dbName: string, options: ClientDbOptions = {}) {
     this.onActivity = options.onActivity;
-    this.db = new LocalDb<JobDbDoc>(dbName, options);
+    this.db = new LocalDb<ClientDbDoc>(dbName, options);
   }
 
   private notifyActivity() {
@@ -35,7 +35,7 @@ export default class JobDb {
     this.db.setToken(token);
   }
 
-  startSync(callbacks: SyncCallbacks<JobDbDoc> = {}) {
+  startSync(callbacks: SyncCallbacks<ClientDbDoc> = {}) {
     return this.db.startSync(callbacks);
   }
 
@@ -48,7 +48,9 @@ export default class JobDb {
   }
 
   watchChanges(
-    onDocChange: (change: PouchDB.Core.ChangesResponseChange<JobDbDoc>) => void,
+    onDocChange: (
+      change: PouchDB.Core.ChangesResponseChange<ClientDbDoc>,
+    ) => void,
   ) {
     return this.db.watchChanges(onDocChange);
   }
