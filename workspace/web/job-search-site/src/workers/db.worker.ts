@@ -1,4 +1,4 @@
-import { ClientDb, type ClientDbOptions } from "@job-search/db-config";
+import { ClientDb, type ClientDbOptions } from "@vue-offline-first/db-config";
 
 export interface WorkerDbOptions extends ClientDbOptions {
   authBaseUrl?: string;

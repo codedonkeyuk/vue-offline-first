@@ -3,7 +3,7 @@ import LocalDb, {
   type BaseDocument,
   type DbClientOptions,
   type SyncCallbacks,
-} from "@job-search/local-db";
+} from "@vue-offline-first/local-db";
 import {
   type AppDocument,
   type CoverLetterDoc,

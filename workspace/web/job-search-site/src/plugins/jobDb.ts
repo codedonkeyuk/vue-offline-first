@@ -1,12 +1,12 @@
 import type {} from "pouchdb-core";
 import { inject, ref, type App, type InjectionKey, type Ref } from "vue";
-import type { ClientDbOptions } from "@job-search/db-config";
+import type { ClientDbOptions } from "@vue-offline-first/db-config";
 import type {
   AppDocument,
   CoverLetterDoc,
   CvDoc,
   JobApplicationDoc,
-} from "@job-search/db-config";
+} from "@vue-offline-first/db-config";
 
 export type SyncState = "idle" | "syncing" | "paused" | "error" | "denied";
 export type SessionState = "authenticated" | "unauthenticated" | "expired";

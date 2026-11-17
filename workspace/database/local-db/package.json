@@ -1,5 +1,5 @@
 {
-  "name": "@job-search/local-db",
+  "name": "@vue-offline-first/local-db",
   "version": "0.0.1",
   "description": "A implementation of a pouchdb database for use within a web application",
   "license": "MIT",
@@ -32,7 +32,7 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@job-search/db-config": "*",
+    "@vue-offline-first/db-config": "*",
     "pouchdb-adapter-http": "^9.0.0",
     "pouchdb-adapter-idb": "^9.0.0",
     "pouchdb-replication": "^9.0.0"

@@ -1,5 +1,5 @@
 {
-  "name": "@job-search/job-search-site",
+  "name": "@vue-offline-first/job-search-site",
   "version": "0.0.1",
   "description": "A basic JavaScript SPA template project.",
   "repository": {
@@ -32,7 +32,7 @@
     "vitest": "^4.1.10"
   },
   "dependencies": {
-    "@job-search/db-config": "*",
+    "@vue-offline-first/db-config": "*",
     "events": "^3.3.0",
     "vue": "^3.5.45"
   }
