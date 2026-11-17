@@ -36,7 +36,7 @@ describe("CouchDB & Shared Document Validation", () => {
   });
 
   describe("2. Deletion Rules", () => {
-    it("allows deleting mutable documents (text_document)", () => {
+    it("allows deleting documents (text_document)", () => {
       const existingApp: TextDoc = {
         _id: "job_1",
         type: "text_document",
@@ -141,7 +141,7 @@ describe("CouchDB & Shared Document Validation", () => {
     });
   });
 
-  describe("5. Mutable vs Immutable Schemas", () => {
+  describe("5. Creating & Updating Documents", () => {
     it("allows creating and updating a text_document", () => {
       const initial: TextDoc = {
         type: "text_document",

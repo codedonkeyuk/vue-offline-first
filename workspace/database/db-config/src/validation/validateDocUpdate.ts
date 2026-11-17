@@ -7,7 +7,6 @@ function validateDocUpdate(
 ): void {
   var SCHEMA_CONFIGS: Record<string, any> = {
     text_document: {
-      mutable: true,
       allowedFields: [
         "_id",
         "_rev",
@@ -30,15 +29,6 @@ function validateDocUpdate(
   }
 
   if (newDoc._deleted) {
-    if (oldDoc && oldDoc.type) {
-      var oldConfig = SCHEMA_CONFIGS[oldDoc.type];
-      if (oldConfig && !oldConfig.mutable) {
-        throw {
-          forbidden:
-            "Immutable records of type " + oldDoc.type + " cannot be deleted.",
-        };
-      }
-    }
     return;
   }
 
@@ -78,32 +68,6 @@ function validateDocUpdate(
 
   if (!newDoc.updatedAt || isNaN(new Date(newDoc.updatedAt).getTime())) {
     throw { forbidden: "A valid timestamp (updatedAt) is required." };
-  }
-
-  if (!config.mutable) {
-    if (oldDoc) {
-      throw {
-        forbidden:
-          "Records of type " +
-          newDoc.type +
-          " are immutable and cannot be modified.",
-      };
-    }
-
-    var linkField = config.linkField;
-    if (
-      linkField &&
-      (!newDoc[linkField] || typeof newDoc[linkField] !== "string")
-    ) {
-      throw {
-        forbidden:
-          "Non-mutable records of type " +
-          newDoc.type +
-          " must have a " +
-          linkField +
-          " reference.",
-      };
-    }
   }
 }
 
