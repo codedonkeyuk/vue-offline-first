@@ -1,16 +1,16 @@
-import { JobSearchLocalDb, type DbClientOptions } from "@job-search/local-db";
+import LocalDb, { type JobDbOptions } from "@job-search/local-db";
 
-export interface WorkerDbOptions extends DbClientOptions {
+export interface WorkerDbOptions extends JobDbOptions {
   authBaseUrl?: string;
   renewThrottleMs?: number;
 }
 
-let db: JobSearchLocalDb | null = null;
+let db: LocalDb | null = null;
 let currentToken: string | undefined;
 let authBaseUrl: string | undefined;
 let lastRenewedAt = 0;
 let renewInFlight: Promise<void> | null = null;
-let renewThrottleMs = 5 * 60 * 1000; // Default: throttle renewals to once per 5 mins
+let renewThrottleMs = 5 * 60 * 1000;
 
 function isTokenExpired(token: string): boolean {
   try {
@@ -53,7 +53,6 @@ async function handleActivity() {
     return;
   }
 
-  // Deduplicate concurrent renewals if multiple DB calls fire at once
   if (renewInFlight) return;
 
   const cleanAuthUrl = authBaseUrl.replace(/\/$/, "");
@@ -80,7 +79,6 @@ async function handleActivity() {
         await teardownSession("expired");
       }
     } catch {
-      // Offline or transient network failure: leave lastRenewedAt unchanged so next activity retries
     } finally {
       renewInFlight = null;
     }
@@ -102,14 +100,13 @@ self.onmessage = async (event: MessageEvent) => {
       renewThrottleMs = options.renewThrottleMs ?? 5 * 60 * 1000;
       lastRenewedAt = Date.now();
 
-      db = new JobSearchLocalDb(payload.dbName, {
+      db = new LocalDb(payload.dbName, {
         ...options,
         onActivity: () => {
           void handleActivity();
         },
       });
 
-      // If the persisted token already expired while the app was closed, wipe local DB immediately
       if (currentToken && isTokenExpired(currentToken)) {
         await teardownSession("expired");
         self.postMessage({ id, result: false });
@@ -167,7 +164,6 @@ self.onmessage = async (event: MessageEvent) => {
       const tokenToRevoke = currentToken;
       const cleanAuthUrl = authBaseUrl?.replace(/\/$/, "");
 
-      // Stop replication immediately before revoking
       db?.stopSync();
 
       if (tokenToRevoke && cleanAuthUrl) {

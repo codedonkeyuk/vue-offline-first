@@ -49,3 +49,9 @@ _`.gitignore` is configured to ignore `.env` file._
 ### View CouchDB
 
 When running it live or in production upi can see it here [http://localhost:5984/_utils](http://localhost:5984/_utils). Use the credentials you set up to view the data.
+
+## Issues
+
+### VS CODE port forwarding
+
+If running in a port forwarding session be sure that all the ports are available as VSCODE fails to detect them. Seems to be an issue they have causes in a recent build.

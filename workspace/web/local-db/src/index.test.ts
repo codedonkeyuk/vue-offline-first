@@ -2,17 +2,17 @@ import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import PouchDB from "pouchdb-core";
 import memoryAdapter from "pouchdb-adapter-memory";
-import { JobSearchLocalDb } from "./index.ts";
+import JobDb from "./index.ts";
 
 PouchDB.plugin(memoryAdapter);
 
 describe("JobSearchLocalDb", () => {
-  let db: JobSearchLocalDb;
+  let db: JobDb;
   let dbName: string;
 
   beforeEach(() => {
     dbName = `test_db_${crypto.randomUUID()}`;
-    db = new JobSearchLocalDb(dbName, { adapter: "memory" });
+    db = new JobDb(dbName, { adapter: "memory" });
   });
 
   afterEach(async () => {
@@ -137,7 +137,7 @@ describe("JobSearchLocalDb", () => {
     it("invokes onActivity when data operations are performed", async () => {
       let activityCount = 0;
       const trackedDbName = `test_activity_${crypto.randomUUID()}`;
-      const trackedDb = new JobSearchLocalDb(trackedDbName, {
+      const trackedDb = new JobDb(trackedDbName, {
         adapter: "memory",
         onActivity: () => {
           activityCount += 1;
@@ -182,7 +182,7 @@ describe("JobSearchLocalDb", () => {
       }) as typeof fetch;
 
       const syncDbName = `test_token_${crypto.randomUUID()}`;
-      const syncDb = new JobSearchLocalDb(syncDbName, {
+      const syncDb = new JobDb(syncDbName, {
         adapter: "memory",
         remoteBaseUrl: "http://localhost:5984",
         token: "initial-jwt-token",
