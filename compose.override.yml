@@ -1,0 +1,6 @@
+services:
+  couchdb:
+    env_file:
+      - .env.development
+    tmpfs:
+      - /opt/couchdb/data

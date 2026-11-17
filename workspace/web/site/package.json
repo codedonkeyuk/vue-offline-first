@@ -1,0 +1,39 @@
+{
+  "name": "@vue-offline-first/site",
+  "version": "0.0.1",
+  "description": "A basic JavaScript SPA template project.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.comcodedonkeyuk/spa-template.git"
+  },
+  "type": "module",
+  "private": true,
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "serveDev": "vite --open --mode development",
+    "serveProd": "vite preview --open --mode production",
+    "prebuild": "prettier . --check && tsc --noEmit",
+    "build": "vite build",
+    "test": "vitest run",
+    "test:debug": "vitest --inspect-brk --no-file-parallelism run",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@types/pouchdb-core": "^7.0.15",
+    "@vite-pwa/assets-generator": "^2.0.0",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "@vue/test-utils": "^2.5.1",
+    "jsdom": "^29.1.1",
+    "vite": "^8.1.5",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^4.1.10"
+  },
+  "dependencies": {
+    "@vue-offline-first/db-config": "*",
+    "events": "^3.3.0",
+    "vue": "^3.5.45"
+  }
+}

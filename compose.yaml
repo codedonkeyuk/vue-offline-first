@@ -1,0 +1,15 @@
+services:
+  couchdb:
+    image: couchdb:3
+    ports:
+      - "5984:5984"
+    volumes:
+      - ./local.ini:/opt/couchdb/etc/local.d/jwt-cors.ini
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5984/_up"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  couchdb_data:

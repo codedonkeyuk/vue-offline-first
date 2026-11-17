@@ -1,43 +1,51 @@
-# vue-template
+# vue-offline-first
 
-Simple Vue / Vite template. Starting point for future JS apps.
+This is a starter template for offline first application. It uses CouchDb in the backend and PouchDb in the frontend.
 
-Vite has been configured to generate icons off a single svg file. This svg file is also used for social media image. You need to edit [./public/logo-square.svg](./public/logo-square.svg) to change all the images used in the app for social sharing and icons.
+## Project Structure
 
-## This app might not be up to date
+This is multi-module project spanning an entire scope of a fullstack project. CouchDB is not JS based, so it is launched as a separate docker service. The project is split into three separate directories src/database, src/services, src/web to represent the fullstack.
 
-I update this project every time I use it, not every time there is a new update to a supporting library. So of you check it out, you might have to deal with some updates.
+| Project                    | description                                                        |
+| -------------------------- | ------------------------------------------------------------------ |
+| `src/database/db-config`   | Db configuration for both couch db and pouch db instances          |
+| `src/service/auth-service` | Authentication service responsible for all auth actions. JWT based |
+| `src/service/site`         | View Single Page Application                                       |
+| `src/service/local-db`     | PouchDB database logic for use within a web worker                 |
 
-## instructions
+## Commands
 
-| code                | description                                                                |
-| ------------------- | -------------------------------------------------------------------------- |
-| `npm install`       | install dependencies                                                       |
-| `nvm use`           | Use node version specified in projects .nvmrc file. (NVM needs installing) |
-| `nvm run test`      | run jest tests                                                             |
-| `nvm run serveDev`  | serve site in development mode (vite), unzipped with livereload (vite)     |
-| `nvm run serveProd` | serve site in production mode (vite), zipped no reload                     |
-| `nvm run clean`     | clean project with prettier                                                |
-| `nvm run validate`  | validate code with typescript & prettier compiler                          |
-| `nvm run build`     | Build site, validates files before doing so                                |
+| code                                                        | description                                                                |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `npm install`                                               | install dependencies for all projects.                                     |
+| `nvm use`                                                   | Use node version specified in projects .nvmrc file. (NVM needs installing) |
+| `nvm run test`                                              | Test all projects                                                          |
+| `nvm run clean`                                             | Clean all projects                                                         |
+| `nvm run validate`                                          | Validate all projects                                                      |
+| `nvm run build`                                             | Build all the projects                                                     |
+| `nvm run serve`                                             | Run web site and admin service for live development                        |
+| `docker compose up -d`                                      | Run docker in test mode, gives you a database to work against              |
+| `docker compose -f compose.yaml -f compose.prod.yaml up -d` | Run docker in productions mode, gives you database site and everything     |
 
-## General Instructions
+## Usage Commands
 
-### Update libraries
+### Configure CouchDB for Live Environment
 
-How to update libraries to the latest
+By default CouchDB uses username:`admin` and password:`password`. To deploy in live environment simply add a `.env` file in root with the following settings.
 
-```bash
-npx npm-check-updates -u
-npm install
+```sh
+COUCHDB_USER=prodadmin
+COUCHDB_PASSWORD=YourSecureServerPassword
 ```
 
-### Update node
+_`.gitignore` is configured to ignore `.env` file._
 
-This project has been set up to use a specific version of node via `.nvmrc` file. Run this command to update to you local version.
+### View CouchDB
 
-```bash
-nvm ls-remote --lts # see latest build
-nvm install node # update to the latest build
-node -v > .nvmrc # this project to the latest
-```
+When running it live or in production upi can see it here [http://localhost:5984/_utils](http://localhost:5984/_utils). Use the credentials you set up to view the data.
+
+## Issues
+
+### VS CODE port forwarding
+
+If running in a port forwarding session be sure that all the ports are available as VSCODE fails to detect them. Seems to be an issue they have causes in a recent build.

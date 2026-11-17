@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -9,17 +8,9 @@
     "sourceMap": true,
     "declaration": true,
     "skipLibCheck": true,
-    "jsx": "react-jsx",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "types": ["vite/client", "vitest/globals"]
-  },
-  "include": [
-    "src/**/*.ts",
-    "vite.config.ts",
-    "pwa-assets.config.ts",
-    "vue-shims.d.ts"
-  ]
+    "noUnusedParameters": true
+  }
 }
