@@ -5,7 +5,7 @@ import validateDocUpdate, {
   assertValidDoc,
   getCouchDesignDoc,
 } from "./validateDocUpdate.ts";
-import type { CoverLetterDoc, CvDoc, JobApplicationDoc } from "./types.ts";
+import type { CoverLetterDoc, CvDoc, JobApplicationDoc } from "../types.ts";
 
 const validTimestamp = new Date().toISOString();
 const standardUser = { roles: [] };

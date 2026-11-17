@@ -1,11 +1,18 @@
-function validateDocUpdate(newDoc, oldDoc, userCtx) {
-  var SCHEMA_CONFIGS = {
+import type { AppDocument } from "../types.ts";
+
+function validateDocUpdate(
+  newDoc: any,
+  oldDoc: any,
+  userCtx: { roles: string[] },
+): void {
+  var SCHEMA_CONFIGS: Record<string, any> = {
     cover_letter: {
       mutable: false,
       linkField: "coverLetterId",
       allowedFields: [
         "_id",
         "_rev",
+        "_revisions",
         "type",
         "title",
         "content",
@@ -20,6 +27,7 @@ function validateDocUpdate(newDoc, oldDoc, userCtx) {
       allowedFields: [
         "_id",
         "_rev",
+        "_revisions",
         "type",
         "title",
         "content",
@@ -30,12 +38,19 @@ function validateDocUpdate(newDoc, oldDoc, userCtx) {
     },
     job_application: {
       mutable: true,
-      allowedFields: ["_id", "_rev", "type", "title", "content", "updatedAt"],
+      allowedFields: [
+        "_id",
+        "_rev",
+        "_revisions",
+        "type",
+        "title",
+        "content",
+        "updatedAt",
+      ],
       maxContent: 5000,
     },
   };
 
-  // 1. ADMIN / DESIGN SECURITY
   if (
     newDoc._id &&
     newDoc._id.indexOf("_design/") === 0 &&
@@ -44,7 +59,6 @@ function validateDocUpdate(newDoc, oldDoc, userCtx) {
     throw { forbidden: "Only admins can modify design documents." };
   }
 
-  // 2. DELETION CHECK
   if (newDoc._deleted) {
     if (oldDoc && oldDoc.type) {
       var oldConfig = SCHEMA_CONFIGS[oldDoc.type];
@@ -58,7 +72,6 @@ function validateDocUpdate(newDoc, oldDoc, userCtx) {
     return;
   }
 
-  // 3. IDENTIFY DOCUMENT TYPE & PREVENT TYPE SWITCHING
   if (oldDoc && oldDoc.type !== newDoc.type) {
     throw { forbidden: "Document type cannot be changed after creation." };
   }
@@ -68,17 +81,15 @@ function validateDocUpdate(newDoc, oldDoc, userCtx) {
     throw { forbidden: "Unknown document type: " + newDoc.type };
   }
 
-  // 4. FIELD WHITELIST
   for (var key in newDoc) {
     if (
-      newDoc.hasOwnProperty(key) &&
+      Object.prototype.hasOwnProperty.call(newDoc, key) &&
       config.allowedFields.indexOf(key) === -1
     ) {
       throw { forbidden: "Field not allowed for " + newDoc.type + ": " + key };
     }
   }
 
-  // 5. CONTENT VALIDATION
   if (newDoc.content !== undefined) {
     if (
       typeof newDoc.content !== "string" ||
@@ -95,12 +106,10 @@ function validateDocUpdate(newDoc, oldDoc, userCtx) {
     }
   }
 
-  // 6. TIMESTAMP VALIDATION
   if (!newDoc.updatedAt || isNaN(new Date(newDoc.updatedAt).getTime())) {
     throw { forbidden: "A valid timestamp (updatedAt) is required." };
   }
 
-  // 7. MUTABLE VS IMMUTABLE LOGIC
   if (!config.mutable) {
     if (oldDoc) {
       throw {
@@ -126,6 +135,34 @@ function validateDocUpdate(newDoc, oldDoc, userCtx) {
       };
     }
   }
+}
+
+export function assertValidDoc(
+  newDoc: Partial<AppDocument> & { _deleted?: boolean },
+  oldDoc: Partial<AppDocument> | null = null,
+  userCtx: { roles: string[] } = { roles: [] },
+): void {
+  try {
+    validateDocUpdate(newDoc, oldDoc, userCtx);
+  } catch (err: any) {
+    if (err && err.forbidden) {
+      const error = new Error(err.forbidden) as Error & { status?: number };
+      error.status = 403;
+      throw error;
+    }
+    throw err;
+  }
+}
+
+export function getCouchDesignDoc() {
+  const anonymousFn = validateDocUpdate
+    .toString()
+    .replace(/^function\s+validateDocUpdate/, "function");
+
+  return {
+    _id: "_design/validation",
+    validate_doc_update: anonymousFn,
+  };
 }
 
 export default validateDocUpdate;

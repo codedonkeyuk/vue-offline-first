@@ -4,8 +4,8 @@ import * as entryPoint from "./index.ts";
 import expectedValidateDocUpdate, {
   assertValidDoc as expectedAssertValidDoc,
   getCouchDesignDoc as expectedGetCouchDesignDoc,
-} from "./validateDocUpdate.ts";
-import expectedJobDb from "./JobDB.ts";
+} from "./validation/validateDocUpdate.ts";
+import expectedJobDb from "./client/JobDB.ts";
 
 describe("index.ts entry point", () => {
   it("re-exports the exact runtime values", () => {

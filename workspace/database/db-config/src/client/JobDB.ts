@@ -9,8 +9,8 @@ import {
   type CoverLetterDoc,
   type CvDoc,
   type JobApplicationDoc,
-} from "./types.ts";
-import { assertValidDoc } from "./validateDocUpdate.ts";
+} from "../types.ts";
+import { assertValidDoc } from "../validation/validateDocUpdate.ts";
 
 type JobDbDoc = AppDocument & BaseDocument;
 
