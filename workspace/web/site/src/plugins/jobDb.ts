@@ -6,6 +6,7 @@ import type {
   CoverLetterDoc,
   CvDoc,
   JobApplicationDoc,
+  TextDoc,
 } from "@vue-offline-first/db-config";
 
 export type SyncState = "idle" | "syncing" | "paused" | "error" | "denied";
@@ -36,6 +37,9 @@ export interface JobDbContext {
   ) => Promise<PouchDB.Core.Response>;
   saveJobApplication: (
     input: Omit<JobApplicationDoc, "type" | "updatedAt">,
+  ) => Promise<PouchDB.Core.Response>;
+  saveTextDoc: (
+    input: Omit<TextDoc, "type" | "updatedAt">,
   ) => Promise<PouchDB.Core.Response>;
   getById: <T extends AppDocument = AppDocument>(
     id: string,
@@ -245,6 +249,7 @@ export function createJobDbPlugin(
         createCoverLetter: (input) => call("createCoverLetter", input),
         createCv: (input) => call("createCv", input),
         saveJobApplication: (input) => call("saveJobApplication", input),
+        saveTextDoc: (input) => call("saveTextDocument", input),
         getById: (id) => call("getById", id),
         getAllByType: (type) => call("getAllByType", type),
         getCoverLetterVersions: (coverLetterId) =>

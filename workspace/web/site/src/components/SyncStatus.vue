@@ -13,7 +13,7 @@ const {
   syncError,
   disconnectSync,
   getAllByType,
-  saveJobApplication,
+  saveTextDoc,
 } = useJobDb();
 
 const docCount = ref<number | null>(null);
@@ -21,12 +21,12 @@ const statusMessage = ref<string | null>(null);
 
 onMounted(async () => {
   try {
-    const existing = await getAllByType("job_application");
+    const existing = await getAllByType("text_document");
 
     if (existing.length === 0) {
-      await saveJobApplication({
-        title: "Software Engineer - Acme Corp",
-        content: "Initial test job application.",
+      await saveTextDoc({
+        title: "My Diary",
+        content: "It was a Tuesday, and I farted.",
       });
       docCount.value = 1;
       statusMessage.value = "Created initial test document.";
@@ -57,7 +57,7 @@ async function handleDisconnect() {
     </div>
 
     <p v-if="docCount !== null">
-      <strong>Job Applications:</strong> {{ docCount }}
+      <strong>Text Documents:</strong> {{ docCount }}
     </p>
     <p v-if="statusMessage">{{ statusMessage }}</p>
     <p v-if="syncError">{{ syncError }}</p>

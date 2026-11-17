@@ -9,6 +9,7 @@ import {
   type CoverLetterDoc,
   type CvDoc,
   type JobApplicationDoc,
+  type TextDoc,
 } from "../types.ts";
 import { assertValidDoc } from "../validation/validateDocUpdate.ts";
 
@@ -95,6 +96,23 @@ export default class ClientDb {
       ...input,
       _id: id,
       type: "job_application",
+      updatedAt: new Date().toISOString(),
+    };
+
+    assertValidDoc(doc, existing);
+    return this.db.put(doc);
+  }
+
+  async saveTextDocument(input: Omit<TextDoc, "type" | "updatedAt">) {
+    this.notifyActivity();
+    const id = input._id ?? `text_document:${crypto.randomUUID()}`;
+    const existing = (await this.db.getById(id)) as TextDoc | null;
+
+    const doc: TextDoc & BaseDocument = {
+      ...existing,
+      ...input,
+      _id: id,
+      type: "text_document",
       updatedAt: new Date().toISOString(),
     };
 

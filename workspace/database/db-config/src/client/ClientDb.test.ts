@@ -133,6 +133,41 @@ describe("ClientDb", () => {
     });
   });
 
+  describe("Text Document (Mutable)", () => {
+    it("creates, updates, retrieves, and deletes a text document", async () => {
+      // 1. Create
+      const created = await db.saveTextDocument({
+        title: "My Diary",
+        content: "Status: Applied",
+      });
+      assert.ok(created.ok);
+      assert.ok(created.id.startsWith("text_document:"));
+
+      // 2. Read
+      const fetched = await db.getById(created.id);
+      assert.ok(fetched);
+      assert.equal(fetched.title, "My Diary");
+
+      // 3. Update
+      const updated = await db.saveTextDocument({
+        _id: created.id,
+        title: "My Diary",
+        content: "Status: Interviewing",
+      });
+      assert.ok(updated.ok);
+      assert.notEqual(updated.rev, created.rev);
+
+      const allApps = await db.getAllByType("text_document");
+      assert.equal(allApps.length, 1);
+      assert.equal(allApps[0].content, "Status: Interviewing");
+
+      // 4. Delete
+      await db.remove(created.id);
+      const afterDelete = await db.getById(created.id);
+      assert.equal(afterDelete, null);
+    });
+  });
+
   describe("Session & Activity Lifecycle", () => {
     it("invokes onActivity when data operations are performed", async () => {
       let activityCount = 0;

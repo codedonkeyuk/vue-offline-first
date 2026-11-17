@@ -6,6 +6,7 @@ import type {
   CoverLetterDoc,
   CvDoc,
   JobApplicationDoc,
+  TextDoc,
   AppDocument,
 } from "./types.ts";
 import ClientDb, { type ClientDbOptions } from "./client/ClientDB.ts";
@@ -16,6 +17,7 @@ export type {
   CoverLetterDoc,
   CvDoc,
   JobApplicationDoc,
+  TextDoc,
   AppDocument,
   ClientDbOptions,
 };

@@ -49,6 +49,19 @@ function validateDocUpdate(
       ],
       maxContent: 5000,
     },
+    text_document: {
+      mutable: true,
+      allowedFields: [
+        "_id",
+        "_rev",
+        "_revisions",
+        "type",
+        "title",
+        "content",
+        "updatedAt",
+      ],
+      maxContent: 5000,
+    },
   };
 
   if (
