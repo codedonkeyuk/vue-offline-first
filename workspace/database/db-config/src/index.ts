@@ -3,21 +3,13 @@ import validateDocUpdate, {
   getCouchDesignDoc,
 } from "./validation/validateDocUpdate.ts";
 import type {
-  BaseDoc,
   CoverLetterDoc,
   CvDoc,
   JobApplicationDoc,
   AppDocument,
 } from "./types.ts";
-import JobDb, { type JobDbOptions } from "./client/JobDB.ts";
+import JobDb from "./client/JobDB.ts";
 
-export { JobDb, validateDocUpdate, assertValidDoc, getCouchDesignDoc };
+export { JobDb, validateDocUpdate, getCouchDesignDoc, assertValidDoc };
 
-export type {
-  BaseDoc,
-  CoverLetterDoc,
-  CvDoc,
-  JobApplicationDoc,
-  AppDocument,
-  JobDbOptions,
-};
+export type { CoverLetterDoc, CvDoc, JobApplicationDoc, AppDocument };
