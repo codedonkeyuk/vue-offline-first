@@ -2,17 +2,17 @@ import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import PouchDB from "pouchdb-core";
 import memoryAdapter from "pouchdb-adapter-memory";
-import ClientDb from "./ClientDB.ts";
+import ClientDB from "./ClientDB.ts";
 
 PouchDB.plugin(memoryAdapter);
 
-describe("ClientDb", () => {
-  let db: ClientDb;
+describe("ClientDB", () => {
+  let db: ClientDB;
   let dbName: string;
 
   beforeEach(() => {
     dbName = `test_db_${crypto.randomUUID()}`;
-    db = new ClientDb(dbName, { adapter: "memory" });
+    db = new ClientDB(dbName, { adapter: "memory" });
   });
 
   afterEach(async () => {
@@ -58,7 +58,7 @@ describe("ClientDb", () => {
     it("invokes onActivity when data operations are performed", async () => {
       let activityCount = 0;
       const trackedDbName = `test_activity_${crypto.randomUUID()}`;
-      const trackedDb = new ClientDb(trackedDbName, {
+      const trackedDb = new ClientDB(trackedDbName, {
         adapter: "memory",
         onActivity: () => {
           activityCount += 1;
@@ -103,7 +103,7 @@ describe("ClientDb", () => {
       }) as typeof fetch;
 
       const syncDbName = `test_token_${crypto.randomUUID()}`;
-      const syncDb = new ClientDb(syncDbName, {
+      const syncDb = new ClientDB(syncDbName, {
         adapter: "memory",
         remoteBaseUrl: "http://localhost:5984",
         token: "initial-jwt-token",

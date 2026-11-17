@@ -1,11 +1,11 @@
-import { ClientDb, type ClientDbOptions } from "@vue-offline-first/db-config";
+import { ClientDB, type ClientDbOptions } from "@vue-offline-first/db-config";
 
 export interface WorkerDbOptions extends ClientDbOptions {
   authBaseUrl?: string;
   renewThrottleMs?: number;
 }
 
-let db: ClientDb | null = null;
+let db: ClientDB | null = null;
 let currentToken: string | undefined;
 let authBaseUrl: string | undefined;
 let lastRenewedAt = 0;
@@ -100,7 +100,7 @@ self.onmessage = async (event: MessageEvent) => {
       renewThrottleMs = options.renewThrottleMs ?? 5 * 60 * 1000;
       lastRenewedAt = Date.now();
 
-      db = new ClientDb(payload.dbName, {
+      db = new ClientDB(payload.dbName, {
         ...options,
         onActivity: () => {
           void handleActivity();

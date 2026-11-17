@@ -13,7 +13,7 @@ export interface ClientDbOptions extends DbClientOptions {
   onActivity?: () => void;
 }
 
-export default class ClientDb {
+export default class ClientDB {
   private db: LocalDb<ClientDbDoc>;
   private onActivity?: () => void;
 
