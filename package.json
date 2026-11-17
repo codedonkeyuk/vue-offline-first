@@ -1,7 +1,7 @@
 {
   "name": "vue-offline-first",
   "version": "0.0.12",
-  "description": "A fullstack application to help with job searchs",
+  "description": "A fullstack template application employing offline first model. Written in Vue, CouchDB and DocumentDb.",
   "homepage": "https://github.com/codedonkeyuk/vue-offline-first#readme",
   "bugs": {
     "url": "https://github.com/codedonkeyuk/vue-offline-firstissues"

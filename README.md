@@ -10,7 +10,7 @@ This is multi-module project spanning an entire scope of a fullstack project. Co
 | -------------------------- | ------------------------------------------------------------------ |
 | `src/database/db-config`   | Db configuration for both couch db and pouch db instances          |
 | `src/service/auth-service` | Authentication service responsible for all auth actions. JWT based |
-| `src/service/site`         | Job search Single Page Application                                 |
+| `src/service/site`         | View Single Page Application                                       |
 | `src/service/local-db`     | PouchDB database logic for use within a web worker                 |
 
 ## Commands

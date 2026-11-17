@@ -6,7 +6,7 @@ import ClientDb from "./ClientDB.ts";
 
 PouchDB.plugin(memoryAdapter);
 
-describe("JobSearchLocalDb", () => {
+describe("ClientDb", () => {
   let db: ClientDb;
   let dbName: string;
 
