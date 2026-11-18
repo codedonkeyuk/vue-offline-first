@@ -31,7 +31,7 @@ services:
     expose:
       - "4000"
     env_file:
-      - .env.production
+      - .env.test
     command: node ./src/server.ts
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:4000/ping"]
@@ -44,10 +44,11 @@ services:
 
   couchdb:
     env_file:
-      - .env.production
+      - .env.test
     restart: unless-stopped
     volumes:
       - couchdb_data:/opt/couchdb/data
+      - ./local.test.ini:/opt/couchdb/etc/local.d/jwt-cors.ini
 
 volumes:
   couchdb_data:

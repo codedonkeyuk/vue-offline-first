@@ -4,5 +4,7 @@ services:
       - "5984:5984"
     env_file:
       - .env.development
+    volumes:
+      - ./local.dev.ini:/opt/couchdb/etc/local.d/jwt-cors.ini
     tmpfs:
       - /opt/couchdb/data
