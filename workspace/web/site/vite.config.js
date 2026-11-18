@@ -1,24 +1,18 @@
 /// <reference types="vitest" />
-import { defineConfig, loadEnv } from "vite";
-import path from "path";
+import { defineConfig } from "vite";
 import siteConfig from "./site-config.json" with { type: "json" };
 import { VitePWA } from "vite-plugin-pwa";
 import vue from "@vitejs/plugin-vue";
 
-export default defineConfig(({ mode }) => {
-  const envDir = path.resolve(import.meta.dirname, "../../../");
-  const env = loadEnv(mode, envDir);
-  const requiredVars = ["VITE_AUTH_API_URL", "VITE_COUCH_BASE_URL"];
-  for (const key of requiredVars) {
-    if (!env[key]) {
-      throw new Error(
-        `Missing required environment variable: ${key} in ${envDir}/.env.${mode}`,
-      );
-    }
-  }
+export default defineConfig(() => {
+  const authApiUrl = process.env.VITE_AUTH_API_URL || "http://localhost:4000";
+  const couchBaseUrl = process.env.VITE_COUCH_BASE_URL || "http://localhost:5984";
 
   return {
-    envDir: path.resolve(import.meta.dirname, "../../../"),
+    define: {
+      "import.meta.env.VITE_AUTH_API_URL": JSON.stringify(authApiUrl),
+      "import.meta.env.VITE_COUCH_BASE_URL": JSON.stringify(couchBaseUrl),
+    },
     resolve: {
       alias: {
         events: "events",

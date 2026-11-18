@@ -30,16 +30,24 @@ This is multi-module project spanning an entire scope of a fullstack project. Co
 
 ## Usage Commands
 
-### Configure CouchDB for Live Environment
+### Configure Application for Live Environment
 
-By default CouchDB uses username:`admin` and password:`password`. To deploy in live environment simply add a `.env` file in root with the following settings.
+Apps designed to pick up environment variables. You can override the default settings using the following:
 
-```sh
-COUCHDB_USER=prodadmin
-COUCHDB_PASSWORD=YourSecureServerPassword
+```ini
+#service overrides
+COUCHDB_URL=http://localhost:5984
+COUCHDB_USER=admin
+COUCHDB_PASSWORD=password
+JWT_SECRET=local-dev-secret
+SESSION_TTL=30m
+
+# Vite overrides
+VITE_AUTH_API_URL = "http://localhost:4000"
+VITE_COUCH_BASE_URL = "http://localhost:5984"
 ```
 
-_`.gitignore` is configured to ignore `.env` file._
+You will also need to update local.ini with auth settings.
 
 ### View CouchDB
 

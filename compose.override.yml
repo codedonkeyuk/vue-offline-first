@@ -3,6 +3,6 @@ services:
     ports:
       - "5984:5984"
     volumes:
-      - ./local.dev.ini:/opt/couchdb/etc/local.d/jwt-cors.ini
+      - ./local.ini:/opt/couchdb/etc/local.d/jwt-cors.ini
     tmpfs:
       - /opt/couchdb/data
