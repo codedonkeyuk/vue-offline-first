@@ -1,6 +1,8 @@
 services:
   couchdb:
-    env_file:
-      - .env.development
+    ports:
+      - "5984:5984"
+    volumes:
+      - ./local.ini:/opt/couchdb/etc/local.d/jwt-cors.ini
     tmpfs:
       - /opt/couchdb/data
