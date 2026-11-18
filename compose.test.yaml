@@ -30,8 +30,11 @@ services:
       - .:/workspace:ro
     expose:
       - "4000"
-    env_file:
-      - .env.test
+    environment:
+      COUCHDB_USER: ${COUCHDB_USER:-admin}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD:-password}
+      COUCHDB_URL: ${COUCHDB_URL:-http://couchdb:5984}
+      JWT_SECRET: ${JWT_SECRET:-local-dev-secret}
     command: node ./src/server.ts
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:4000/ping"]

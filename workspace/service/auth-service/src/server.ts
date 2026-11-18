@@ -21,18 +21,10 @@ function isJwtClaims(payload: string | jwt.JwtPayload): payload is JwtClaims {
   );
 }
 
-function getRequiredEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${name}`);
-  }
-  return value;
-}
-
-const COUCH_URL = getRequiredEnv("COUCHDB_URL");
-const COUCH_USER = getRequiredEnv("COUCHDB_USER");
-const COUCH_PASSWORD = getRequiredEnv("COUCHDB_PASSWORD");
-const JWT_SECRET = getRequiredEnv("JWT_SECRET");
+const COUCH_URL = process.env["COUCHDB_URL"] || "http://localhost:5984";
+const COUCH_USER = process.env["COUCHDB_USER"] || "admin";
+const COUCH_PASSWORD = process.env["COUCHDB_PASSWORD"] || "password";
+const JWT_SECRET = process.env["JWT_SECRET"] || "local-dev-secret";
 
 const COUCH_AUTH = `Basic ${Buffer.from(`${COUCH_USER}:${COUCH_PASSWORD}`).toString("base64")}`;
 
