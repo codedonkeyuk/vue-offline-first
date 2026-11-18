@@ -15,17 +15,18 @@ This is multi-module project spanning an entire scope of a fullstack project. Co
 
 ## Commands
 
-| code                                                        | description                                                                |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `npm install`                                               | install dependencies for all projects.                                     |
-| `nvm use`                                                   | Use node version specified in projects .nvmrc file. (NVM needs installing) |
-| `nvm run test`                                              | Test all projects                                                          |
-| `nvm run clean`                                             | Clean all projects                                                         |
-| `nvm run validate`                                          | Validate all projects                                                      |
-| `nvm run build`                                             | Build all the projects                                                     |
-| `nvm run serve`                                             | Run web site and admin service for live development                        |
-| `docker compose up -d`                                      | Run docker in test mode, gives you a database to work against              |
-| `docker compose -f compose.yaml -f compose.prod.yaml up -d` | Run docker in productions mode, gives you database site and everything     |
+| code                                                                             | description                                                                        |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `npm install`                                                                    | install dependencies for all projects.                                             |
+| `nvm use`                                                                        | Use node version specified in projects .nvmrc file. (NVM needs installing)         |
+| `nvm run test`                                                                   | Test all projects                                                                  |
+| `nvm run clean`                                                                  | Clean all projects                                                                 |
+| `nvm run validate`                                                               | Validate all projects                                                              |
+| `nvm run build`                                                                  | Build all the projects                                                             |
+| `nvm run serve`                                                                  | Run web site and admin service for live development                                |
+| `docker compose up -d`                                                           | Run docker in test mode, gives you a database to work against                      |
+| `docker compose -f compose.yaml -f compose.test.yaml up -d`                      | Run docker container in test mode, verything is deployed in a docker image locally |
+| `sudo docker compose -f compose.yaml -f compose.test.yaml down --remove-orphans` | Removes docker container in test mode, gives you database site and everything      |
 
 ## Usage Commands
 

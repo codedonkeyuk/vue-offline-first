@@ -1,5 +1,7 @@
 services:
   couchdb:
+    ports:
+      - "5984:5984"
     env_file:
       - .env.development
     tmpfs:

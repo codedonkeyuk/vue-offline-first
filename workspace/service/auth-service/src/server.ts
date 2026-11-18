@@ -197,6 +197,10 @@ app.post("/logout", (req: Request, res: Response) => {
   res.json({ success: true });
 });
 
+app.get("/ping", (_req: Request, res: Response) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 if (import.meta.main) {
   app.listen(4000, () => {
     console.log("Express auth server listening on port 4000");
