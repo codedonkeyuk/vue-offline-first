@@ -6,7 +6,8 @@ import vue from "@vitejs/plugin-vue";
 
 export default defineConfig(() => {
   const authApiUrl = process.env.VITE_AUTH_API_URL || "http://localhost:4000";
-  const couchBaseUrl = process.env.VITE_COUCH_BASE_URL || "http://localhost:5984";
+  const couchBaseUrl =
+    process.env.VITE_COUCH_BASE_URL || "http://localhost:5984";
 
   return {
     define: {
