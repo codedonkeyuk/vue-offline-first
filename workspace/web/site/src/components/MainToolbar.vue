@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import Button from "./Button.vue";
+import SettingsDialog from "./SettingsDialog.vue";
 </script>
 <template>
   <nav id="main-toolbar">
     <div id="logo"></div>
     <div id="options">
-      <Button size="sm">Setting</Button>
+      <SettingsDialog />
     </div>
   </nav>
 </template>
