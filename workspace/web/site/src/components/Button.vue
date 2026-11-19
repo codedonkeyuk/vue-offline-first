@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from "vue";
+
 export type ButtonVariant = "primary" | "secondary";
 export type ButtonSize = "sm" | "md" | "lg";
 
@@ -6,21 +8,32 @@ const {
   variant = "primary",
   size = "md",
   disabled = false,
+  href,
 } = defineProps<{
   variant?: ButtonVariant;
   size?: ButtonSize;
   disabled?: boolean;
+  href?: string;
 }>();
+
+const componentTag = computed(() => {
+  if (disabled) return "button";
+  if (href) return "a";
+  return "button";
+});
 </script>
 
 <template>
-  <button
+  <component
+    :is="componentTag"
+    :href="!disabled ? href : undefined"
+    :disabled="componentTag === 'button' ? disabled : undefined"
+    :aria-disabled="disabled || undefined"
     class="btn"
-    :class="[`btn--${variant}`, `btn--${size}`]"
-    :disabled="disabled"
+    :class="[`btn--${variant}`, `btn--${size}`, { 'is-disabled': disabled }]"
   >
     <slot />
-  </button>
+  </component>
 </template>
 
 <style scoped>
@@ -31,6 +44,7 @@ const {
   font-family: inherit;
   font-weight: 600;
   line-height: 1.25;
+  text-decoration: none;
   border-radius: 6px;
   border: 1px solid transparent;
   cursor: pointer;
@@ -61,23 +75,25 @@ const {
 
 .btn--primary {
   background-color: var(--button-primary-background);
+  border-color: var(--button-primary-background-bdr);
   color: var(--button-primary-color);
 }
 
-.btn--primary:hover:not(:disabled) {
+.btn--primary:hover:not(.is-disabled) {
   background-color: var(--button-primary-background-hover);
 }
 
 .btn--secondary {
   background-color: var(--button-secondary-background);
-  color: var(--button-primary-color);
+  border-color: var(--button-secondary-background-bdr);
+  color: var(--button-secondary-color);
 }
 
-.btn--secondary:hover:not(:disabled) {
+.btn--secondary:hover:not(.is-disabled) {
   background-color: var(--button-secondary-background-hover);
 }
 
-.btn:active:not(:disabled) {
+.btn:active:not(.is-disabled) {
   transform: translateY(1px);
 }
 
@@ -86,7 +102,7 @@ const {
   outline-offset: 2px;
 }
 
-.btn:disabled {
+.btn.is-disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
