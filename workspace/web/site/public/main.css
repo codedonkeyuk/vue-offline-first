@@ -1,16 +1,30 @@
 :root {
-  --main-background: white;
+  --main-background: #436850;
   --main-color: black;
+  --main-toolbar: white;
+  --page-color: transparent;
+  --card-color: white;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --main-background: black;
-    --main-color: white;
+    --main-background: #22242a;
+    --main-color: #e8eaf2;
+    --main-toolbar: #272930;
+    --page-color: transparent;
+    --card-color: #272930;
   }
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", system-ui, sans-serif;
 }
 
 body {
   background: var(--main-background);
   color: var(--main-color);
+  margin: 0;
+  padding: 0;
 }
