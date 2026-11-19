@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useJobDb } from "../plugins/jobDb.js";
+import Button from "./Button.vue";
 
 const emit = defineEmits<{
   done: [];
@@ -69,12 +70,17 @@ async function handleSubmit() {
 
     <p v-if="error">{{ error }}</p>
 
-    <button type="submit" :disabled="isLoading">
+    <Button type="submit" :disabled="isLoading">
       {{ isLoading ? "Connecting..." : "Login & Sync" }}
-    </button>
+    </Button>
 
-    <button type="button" :disabled="isLoading" @click="emit('cancel')">
+    <Button
+      type="button"
+      :disabled="isLoading"
+      variant="secondary"
+      @click="emit('cancel')"
+    >
       Cancel
-    </button>
+    </Button>
   </form>
 </template>

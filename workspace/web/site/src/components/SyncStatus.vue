@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useJobDb } from "../plugins/jobDb.js";
-import LogoutButton from "../components/LogoutButton.vue";
+import Button from "./Button.vue";
 
 const emit = defineEmits<{
   openLogin: [];
@@ -62,15 +62,14 @@ async function handleDisconnect() {
     <p v-if="statusMessage">{{ statusMessage }}</p>
     <p v-if="syncError">{{ syncError }}</p>
 
-    <button v-if="!isSyncEnabled" type="button" @click="emit('openLogin')">
+    <Button v-if="!isSyncEnabled" type="button" @click="emit('openLogin')">
       Connect Remote Sync
-    </button>
+    </Button>
 
-    <button v-else type="button" @click="handleDisconnect">
+    <Button v-else type="button" @click="handleDisconnect">
       Disconnect Sync
-    </button>
+    </Button>
 
-    <LogoutButton />
     <p v-if="syncError">{{ syncError }}</p>
   </div>
 </template>

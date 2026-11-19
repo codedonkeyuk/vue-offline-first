@@ -1,3 +1,15 @@
+<script setup lang="ts">
+import Button from "./Button.vue";
+</script>
+<template>
+  <nav id="main-toolbar">
+    <div id="logo"></div>
+    <div id="options">
+      <Button size="sm">Setting</Button>
+    </div>
+  </nav>
+</template>
+
 <style scoped>
 #main-toolbar {
   display: flex;
@@ -16,11 +28,3 @@
   padding: 5px;
 }
 </style>
-<template>
-  <nav id="main-toolbar">
-    <div id="logo"></div>
-    <div id="options">
-      <button>Setting</button>
-    </div>
-  </nav>
-</template>

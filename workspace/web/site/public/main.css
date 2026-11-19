@@ -3,6 +3,17 @@
   --main-color: #16171a;
   --main-toolbar: #f8fafc;
   --card-color: #f0f2f5;
+  --focus-color: #16171a;
+
+  --button-primary-background: #16171a;
+  --button-primary-background-hover: #272930;
+  --button-primary-background-bdr: #16171a;
+  --button-primary-color: #f8fafc;
+
+  --button-secondary-background: #f0f2f5;
+  --button-secondary-background-hover: #e2e8f0;
+  --button-secondary-background-bdr: #cbd5e1;
+  --button-secondary-color: #16171a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -11,6 +22,17 @@
     --main-color: #e8eaf2;
     --main-toolbar: #272930;
     --card-color: #272930;
+    --focus-color: #f8fafc;
+
+    --button-primary-background: #f8fafc;
+    --button-primary-background-hover: #e2e8f0;
+    --button-primary-background-bdr: #3b3e4a;
+    --button-primary-color: #16171a;
+
+    --button-secondary-background: #272930;
+    --button-secondary-background-hover: #32353e;
+    --button-secondary-background-bdr: #3b3e4a;
+    --button-secondary-color: #f8fafc;
   }
 }
 
