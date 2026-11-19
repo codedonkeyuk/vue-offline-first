@@ -6,8 +6,6 @@
 
   & #page {
     width: 900px;
-    background: var(--page-color);
-    color: var(--main-color);
   }
 }
 </style>

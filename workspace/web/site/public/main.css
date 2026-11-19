@@ -1,9 +1,8 @@
 :root {
-  --main-background: #436850;
-  --main-color: black;
-  --main-toolbar: white;
-  --page-color: transparent;
-  --card-color: white;
+  --main-background: #ffffff;
+  --main-color: #16171a;
+  --main-toolbar: #f8fafc;
+  --card-color: #f0f2f5;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -11,7 +10,6 @@
     --main-background: #22242a;
     --main-color: #e8eaf2;
     --main-toolbar: #272930;
-    --page-color: transparent;
     --card-color: #272930;
   }
 }
