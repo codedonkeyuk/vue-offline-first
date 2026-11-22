@@ -6,14 +6,22 @@ import Container from "./Container.vue";
 import Card from "./Card.vue";
 import MainToolbar from "./MainToolbar.vue";
 import Input from "./Input.vue";
-
+import ToastContainer from "./ToastContainer.vue";
+import { useToast } from "../composable/useToast.js";
 const inputVar = ref<string>("Moo");
 
 const showLogin = ref(false);
+
+const { warning } = useToast();
+
+const triggerWarning = () => {
+  warning("Your session will expire in 2 minutes.");
+};
 </script>
 
 <template>
   <MainToolbar />
+  <ToastContainer />
   <Container>
     <Card>
       <SyncLoginForm
@@ -33,5 +41,6 @@ const showLogin = ref(false);
       error
     />
     value: {{ inputVar }}
+    <button @click="triggerWarning">show warning</button>
   </Container>
 </template>
