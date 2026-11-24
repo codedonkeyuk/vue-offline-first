@@ -6,9 +6,11 @@ import Container from "./Container.vue";
 import Card from "./Card.vue";
 import MainToolbar from "./MainToolbar.vue";
 import Input from "./Input.vue";
+import InputTextArea from "./InputTextArea.vue";
 import ToastContainer from "./ToastContainer.vue";
 import { useToast } from "../composable/useToast.js";
 const inputVar = ref<string>("Moo");
+const inputTextAreaVar = ref<string>("Poo");
 
 const showLogin = ref(false);
 
@@ -41,6 +43,17 @@ const triggerWarning = () => {
       error
     />
     value: {{ inputVar }}
+    <br />
+    <InputTextArea
+      id="my_new_text_area"
+      label="My New Text Area"
+      v-model="inputTextAreaVar"
+      required
+      help-text="You need help textarea"
+      error
+    />
+    value: {{ inputTextAreaVar }}
+    <br />
     <button @click="triggerWarning">show warning</button>
   </Container>
 </template>

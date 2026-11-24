@@ -1,5 +1,7 @@
+<!-- TextInput.vue -->
 <script setup lang="ts">
 import { type InputTypeHTMLAttribute } from "vue";
+import FormField from "./FormField.vue";
 
 defineOptions({ inheritAttrs: false });
 
@@ -22,65 +24,28 @@ const {
   helpText?: string;
   errorMessage?: string;
 }>();
-
-const helpId = `${id}-help`;
-const errorId = `${id}-error`;
 </script>
 
 <template>
-  <div class="field" :class="{ 'field--error': error || !!errorMessage }">
-    <label :for="id" class="field-label">
-      <span v-if="required" class="field-required" aria-hidden="true">*</span
-      >{{ label }}
-    </label>
-
+  <FormField
+    v-slot="slotProps"
+    :id="id"
+    :label="label"
+    :required="required"
+    :error="error"
+    :help-text="helpText"
+    :error-message="errorMessage"
+  >
     <input
-      v-bind="$attrs"
-      :id
-      :type
-      :required
+      v-bind="{ ...$attrs, ...slotProps }"
+      :type="type"
       v-model="model"
       class="field-input"
-      :aria-invalid="error || !!errorMessage || undefined"
-      :aria-describedby="
-        [helpText ? helpId : null, errorMessage ? errorId : null]
-          .filter(Boolean)
-          .join(' ') || undefined
-      "
     />
-
-    <small
-      v-if="errorMessage"
-      :id="errorId"
-      class="field-error"
-      aria-live="polite"
-    >
-      {{ errorMessage }}
-    </small>
-    <small v-if="helpText" :id="helpId" class="field-help">
-      {{ helpText }}
-    </small>
-  </div>
+  </FormField>
 </template>
 
 <style scoped>
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-}
-
-.field-label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #374151;
-}
-
-.field-required {
-  color: #dc2626;
-  margin-right: 0.25rem;
-}
-
 .field-input {
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
@@ -100,17 +65,6 @@ const errorId = `${id}-error`;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-.field-help {
-  font-size: 0.875rem;
-  line-height: 1.25;
-  color: #6b7280;
-}
-
-/* Error State */
-.field--error .field-label {
-  color: #dc2626;
-}
-
 .field--error .field-input {
   border-color: #dc2626;
 }
@@ -118,9 +72,5 @@ const errorId = `${id}-error`;
 .field--error .field-input:focus {
   border-color: #dc2626;
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
-}
-
-.field--error .field-help {
-  color: #dc2626;
 }
 </style>
