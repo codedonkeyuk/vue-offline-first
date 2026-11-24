@@ -8,7 +8,11 @@ import MainToolbar from "./MainToolbar.vue";
 import Input from "./Input.vue";
 import InputTextArea from "./InputTextArea.vue";
 import ToastContainer from "./ToastContainer.vue";
+import WarningDisplay from "./WarningDisplay.vue";
 import { useToast } from "../composable/useToast.js";
+import { useWarning } from "../composable/useWarning.js";
+
+const { error } = useWarning();
 const inputVar = ref<string>("Moo");
 const inputTextAreaVar = ref<string>("Poo");
 
@@ -16,14 +20,19 @@ const showLogin = ref(false);
 
 const { warning } = useToast();
 
-const triggerWarning = () => {
+const triggerToastWarning = () => {
   warning("Your session will expire in 2 minutes.");
+};
+
+const triggerWarning = () => {
+  error({ message: "Connection lost. Retrying...", scope: "global" });
 };
 </script>
 
 <template>
   <MainToolbar />
   <ToastContainer />
+  <WarningDisplay />
   <Container>
     <Card>
       <SyncLoginForm
@@ -54,6 +63,7 @@ const triggerWarning = () => {
     />
     value: {{ inputTextAreaVar }}
     <br />
+    <button @click="triggerToastWarning">show tost warning</button>
     <button @click="triggerWarning">show warning</button>
   </Container>
 </template>
