@@ -33,8 +33,8 @@ const describedBy = computed(
 <template>
   <div class="field" :class="{ 'field--error': hasError }">
     <label :for="id" class="field-label">
-      <span v-if="required" class="field-required" aria-hidden="true">*</span>
       {{ label }}
+      <span v-if="required" class="field-required" aria-hidden="true">*</span>
     </label>
 
     <!-- Pass computed accessibility attributes down to the control -->
@@ -73,15 +73,12 @@ const describedBy = computed(
 .field-help {
   font-size: 0.875rem;
   line-height: 1.25;
-  color: #6b7280;
 }
 .field-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
 }
 .field-required {
-  color: #dc2626;
   margin-right: 0.25rem;
 }
 /* Use :deep() so scoped styles reach child components like InputLabel */

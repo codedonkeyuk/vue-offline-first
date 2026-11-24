@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { RouterLink, type RouteLocationRaw } from "vue-router";
 
 export type ButtonVariant = "primary" | "secondary";
 export type ButtonSize = "sm" | "md" | "lg";
@@ -9,15 +10,18 @@ const {
   size = "md",
   disabled = false,
   href,
+  to,
 } = defineProps<{
   variant?: ButtonVariant;
   size?: ButtonSize;
   disabled?: boolean;
   href?: string;
+  to?: RouteLocationRaw;
 }>();
 
 const componentTag = computed(() => {
   if (disabled) return "button";
+  if (to) return RouterLink;
   if (href) return "a";
   return "button";
 });
@@ -26,7 +30,8 @@ const componentTag = computed(() => {
 <template>
   <component
     :is="componentTag"
-    :href="!disabled ? href : undefined"
+    :to="!disabled ? to : undefined"
+    :href="!disabled && !to ? href : undefined"
     :disabled="componentTag === 'button' ? disabled : undefined"
     :aria-disabled="disabled || undefined"
     class="btn"

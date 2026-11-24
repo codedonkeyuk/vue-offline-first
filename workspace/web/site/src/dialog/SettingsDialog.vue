@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import Button from "./Button.vue";
-import Dialog from "./Dialog.vue";
+import Button from "../components/Button.vue";
+import Dialog from "../components/Dialog.vue";
 
 const isOpen = ref(false);
 </script>

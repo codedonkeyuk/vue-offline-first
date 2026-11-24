@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import SettingsDialog from "./SettingsDialog.vue";
+import SettingsDialog from "../dialog/SettingsDialog.vue";
 </script>
 <template>
   <nav id="main-toolbar">
     <div id="logo"></div>
     <div id="options">
+      <nav>
+        <slot></slot>
+      </nav>
       <SettingsDialog />
     </div>
   </nav>

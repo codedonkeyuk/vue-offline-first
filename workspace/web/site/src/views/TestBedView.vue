@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import SyncStatus from "./SyncStatus.vue";
-import SyncLoginForm from "./SyncLoginForm.vue";
-import Container from "./Container.vue";
-import Card from "./Card.vue";
-import MainToolbar from "./MainToolbar.vue";
-import Input from "./Input.vue";
-import InputTextArea from "./InputTextArea.vue";
-import ToastContainer from "./ToastContainer.vue";
-import WarningDisplay from "./WarningDisplay.vue";
+import SyncStatus from "../components/SyncStatus.vue";
+import SyncLoginForm from "../components/SyncLoginForm.vue";
+import Container from "../components/Container.vue";
+import Card from "../components/Card.vue";
+import Input from "../components//Input.vue";
+import InputTextArea from "../components/InputTextArea.vue";
+import ToastContainer from "../components/ToastContainer.vue";
+import WarningDisplay from "../components/WarningDisplay.vue";
 import { useToast } from "../composable/useToast.js";
 import { useWarning } from "../composable/useWarning.js";
 
@@ -30,7 +29,6 @@ const triggerWarning = () => {
 </script>
 
 <template>
-  <MainToolbar />
   <ToastContainer />
   <WarningDisplay />
   <Container>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useTemplateRef, watchEffect } from "vue";
+import ButtonBar from "./ButtonBar.vue";
 
 const { title } = defineProps<{
   title?: string;
@@ -54,7 +55,9 @@ function handleBackdropClick(event: MouseEvent) {
       </div>
 
       <div v-if="$slots.footer" class="dialog-footer">
-        <slot name="footer" />
+        <ButtonBar>
+          <slot name="footer" />
+        </ButtonBar>
       </div>
     </div>
   </dialog>

@@ -34,6 +34,7 @@
   "dependencies": {
     "@vue-offline-first/db-config": "*",
     "events": "^3.3.0",
-    "vue": "^3.5.45"
+    "vue": "^3.5.45",
+    "vue-router": "^5.5.1"
   }
 }
