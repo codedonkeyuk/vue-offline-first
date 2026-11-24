@@ -1,6 +1,6 @@
 {
   "name": "vue-offline-first",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "A fullstack template application employing offline first model. Written in Vue, CouchDB and DocumentDb.",
   "homepage": "https://github.com/codedonkeyuk/vue-offline-first#readme",
   "bugs": {
