@@ -2,6 +2,13 @@ import { shallowMount } from "@vue/test-utils";
 import { h } from "vue";
 import FormField from "./FormField.vue";
 
+interface FormFieldSlotProps {
+  id: string;
+  required: boolean;
+  ariaInvalid?: boolean;
+  ariaDescribedby?: string;
+}
+
 describe("FormField", () => {
   it("renders label linked to id and default non-error state", () => {
     const wrapper = shallowMount(FormField, {
@@ -85,7 +92,7 @@ describe("FormField", () => {
 
   describe("Scoped Slot Accessibility Props", () => {
     it("passes clean default slot props when no error or helpText is set", () => {
-      let receivedProps: Record<string, unknown> | undefined;
+      let receivedProps: FormFieldSlotProps | undefined;
 
       shallowMount(FormField, {
         props: {
@@ -93,7 +100,7 @@ describe("FormField", () => {
           label: "Full Name",
         },
         slots: {
-          default: (slotProps) => {
+          default: (slotProps: FormFieldSlotProps) => {
             receivedProps = slotProps;
             return h("input", slotProps);
           },
@@ -109,7 +116,7 @@ describe("FormField", () => {
     });
 
     it("passes ariaInvalid and combined ariaDescribedby when helpText and errorMessage are both present", () => {
-      let receivedProps: Record<string, unknown> | undefined;
+      let receivedProps: FormFieldSlotProps | undefined;
 
       shallowMount(FormField, {
         props: {
@@ -120,7 +127,7 @@ describe("FormField", () => {
           errorMessage: "Invalid email format",
         },
         slots: {
-          default: (slotProps) => {
+          default: (slotProps: FormFieldSlotProps) => {
             receivedProps = slotProps;
             return h("input", slotProps);
           },
@@ -136,7 +143,7 @@ describe("FormField", () => {
     });
 
     it("passes only help id in ariaDescribedby when only helpText is provided", () => {
-      let receivedProps: Record<string, unknown> | undefined;
+      let receivedProps: FormFieldSlotProps | undefined;
 
       shallowMount(FormField, {
         props: {
@@ -146,7 +153,7 @@ describe("FormField", () => {
           helpText: "Enter work email",
         },
         slots: {
-          default: (slotProps) => {
+          default: (slotProps: FormFieldSlotProps) => {
             receivedProps = slotProps;
             return h("input", slotProps);
           },
