@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Card from "../components/Card.vue";
 import ButtonBar from "../components/ButtonBar.vue";
+import Button from "../components/Button.vue";
 import CreateTextDocument from "../dialog/CreateTextDocumentDialog.vue";
 import DeleteTextDocument from "../dialog/DeleteTextDocument.vue";
 import FormatDate from "../components/FormatDate.vue";
@@ -50,7 +51,17 @@ onMounted(async () => {
           <td>{{ doc.title }}</td>
           <td>{{ doc.content }}</td>
           <td><FormatDate :date="doc.updatedAt" /></td>
-          <td><DeleteTextDocument @deleted="refreshDocs" :record="doc" /></td>
+          <td>
+            <ButtonBar align="left">
+              <Button
+                variant="primary"
+                size="sm"
+                :to="{ name: 'document', params: { id: doc._id } }"
+                >Open</Button
+              >
+              <DeleteTextDocument @deleted="refreshDocs" :record="doc" />
+            </ButtonBar>
+          </td>
         </tr>
       </tbody>
     </table>

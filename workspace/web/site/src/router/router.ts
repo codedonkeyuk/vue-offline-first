@@ -8,14 +8,19 @@ import TextDocumentView from "../views/TextDocumentView.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "text document",
+    name: "main",
     component: TextDocumentView,
   },
   {
     path: "/test-bed",
     name: "test bed",
-    // Example of lazy-loading a component with TypeScript
     component: () => import("../views/TestBedView.vue"),
+  },
+  {
+    path: "/document/:id",
+    name: "document",
+    component: () => import("../views/TextDocumentEditorView.vue"),
+    props: true,
   },
 ];
 

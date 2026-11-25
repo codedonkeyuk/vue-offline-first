@@ -99,7 +99,11 @@ export function createJobDbPlugin(
         const id = ++requestId;
         return new Promise((resolve, reject) => {
           pending.set(id, { resolve, reject });
-          worker.postMessage({ id, type, payload });
+          worker.postMessage({
+            id,
+            type,
+            payload: payload ? JSON.parse(JSON.stringify(payload)) : payload,
+          });
         });
       };
 

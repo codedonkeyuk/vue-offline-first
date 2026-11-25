@@ -6,7 +6,6 @@ import Container from "./components/Container.vue";
 </script>
 <template>
   <MainToolbar>
-    <Button size="sm" to="/">Text Documents</Button>
     <Button size="sm" to="/test-bed">Test Bed</Button>
   </MainToolbar>
   <Container><RouterView /></Container>
