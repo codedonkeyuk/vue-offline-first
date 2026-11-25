@@ -12,11 +12,6 @@ const routes: Array<RouteRecordRaw> = [
     component: TextDocumentView,
   },
   {
-    path: "/test-bed",
-    name: "test bed",
-    component: () => import("../views/TestBedView.vue"),
-  },
-  {
     path: "/document/:id",
     name: "document",
     component: () => import("../views/TextDocumentEditorView.vue"),

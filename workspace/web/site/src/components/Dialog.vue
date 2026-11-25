@@ -2,8 +2,9 @@
 import { useTemplateRef, watchEffect } from "vue";
 import ButtonBar from "./ButtonBar.vue";
 
-const { title } = defineProps<{
+const { title, alertVariant = "warning" } = defineProps<{
   title?: string;
+  alertVariant?: "warning" | "error" | "info";
 }>();
 
 const isOpen = defineModel<boolean>({ default: false });
@@ -48,6 +49,14 @@ function handleBackdropClick(event: MouseEvent) {
         >
           ✕
         </button>
+      </div>
+
+      <div
+        v-if="$slots.alert"
+        :class="['dialog-alert', `dialog-alert--${alertVariant}`]"
+        :role="alertVariant === 'info' ? 'status' : 'alert'"
+      >
+        <slot name="alert" />
       </div>
 
       <div class="dialog-body">
@@ -117,6 +126,31 @@ function handleBackdropClick(event: MouseEvent) {
 .dialog-close:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
+}
+
+.dialog-alert {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.925rem;
+  line-height: 1.4;
+  border-bottom: 1px solid transparent;
+}
+
+.dialog-alert--warning {
+  background-color: var(--warning-bg, rgba(245, 158, 11, 0.12));
+  color: var(--warning-text, inherit);
+  border-bottom-color: var(--warning-bdr, rgba(245, 158, 11, 0.35));
+}
+
+.dialog-alert--error {
+  background-color: var(--error-bg, rgba(239, 68, 68, 0.12));
+  color: var(--error-text, inherit);
+  border-bottom-color: var(--error-bdr, rgba(239, 68, 68, 0.35));
+}
+
+.dialog-alert--info {
+  background-color: var(--info-bg, rgba(59, 130, 246, 0.12));
+  color: var(--info-text, inherit);
+  border-bottom-color: var(--info-bdr, rgba(59, 130, 246, 0.35));
 }
 
 .dialog-body {

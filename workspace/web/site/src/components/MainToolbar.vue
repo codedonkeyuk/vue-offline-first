@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SettingsDialog from "../dialog/SettingsDialog.vue";
+import ConnectionDialog from "../dialog/ConnectionDialog.vue";
 </script>
 <template>
   <nav id="main-toolbar">
@@ -8,7 +8,7 @@ import SettingsDialog from "../dialog/SettingsDialog.vue";
       <nav>
         <slot></slot>
       </nav>
-      <SettingsDialog />
+      <ConnectionDialog />
     </div>
   </nav>
 </template>
