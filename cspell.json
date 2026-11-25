@@ -1,7 +1,7 @@
 {
   "version": "0.2",
   "language": "en-GB",
-  "words": ["vite", "husky", "cspell", "pouchdb", "polyfill"],
+  "words": ["vite", "husky", "cspell", "pouchdb", "polyfill", "dialog"],
   "languageSettings": [
     {
       "languageId": "markdown",
